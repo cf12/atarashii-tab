@@ -1,0 +1,12 @@
+{
+  "name": "Anime New Tab Page",
+  "description": "Displays anime wallpapers from the internet on your new tab page!",
+  "version": "1.0",
+  "manifest_version": 3,
+  "chrome_url_overrides": {
+    "newtab": "dist/index.html"
+  },
+  "permissions": [
+    "identity"
+  ]
+}
