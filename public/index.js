@@ -1,10 +1,26 @@
 const bg = document.querySelector('.bg')
 
-fetch('https://www.reddit.com/r/Animewallpaper/search.json?q=flair:%22Desktop%22&limit=1')
+bg.addEventListener('load', () => {
+  bg.classList.add('load')
+}, false)
+
+
+const query = new URLSearchParams({
+  q: 'flair:"Desktop"',
+  restrict_sr: 1
+})
+
+fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
   .then(res => res.json())
   .then(data => {
-    const post = data.data.children[0].data
-    console.log(post)
+    const posts = data.data.children
+
+    let post
+
+    do {
+      post = posts[Math.floor(Math.random() * posts.length)].data
+      console.log(post.url)
+    } while (post && !post.url.includes('i.redd.it'))
 
     bg.src = post.url
   })
