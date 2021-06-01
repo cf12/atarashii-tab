@@ -29,13 +29,7 @@ function decodeHtml (html) {
     day: "numeric",
   })
 
-  console.log(now.toLocaleString())
-  console.log(tomorrow.toLocaleString())
-
-  const delta = tomorrow - now
-  console.log(delta)
-
-  setTimeout(update, delta)
+  setTimeout(update, tomorrow - now)
 })()
 
 bg.addEventListener(
@@ -50,7 +44,7 @@ const query = new URLSearchParams({
   q: 'flair:"Desktop"',
   count: 25,
   sort: "top",
-  t: "all",
+  t: "month",
   restrict_sr: 1,
 })
 
@@ -66,10 +60,15 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       post = posts[Math.floor(Math.random() * posts.length)].data
     } while (post && !post.url.includes("i.redd.it"))
 
-    console.log(post)
+    const img = post.preview.images[0].resolutions.pop()
+    const title = decodeHtml(post.title)
 
-    bg.src = post.url
-    attrSource.textContent = decodeHtml(post.title)
+    console.log(img)
+
+    bg.src = decodeHtml(img.url)
+    attrSource.textContent = title.length > 48
+      ? title.slice(0, 49) + ' ...'
+      : title
     attrSource.href = `https://redd.it/${post.id}`
   })
 
