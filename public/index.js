@@ -1,12 +1,20 @@
 const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
+const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
+
+function decodeHtml (html) {
+  let txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
 
 ;(function update() {
   time.textContent = new Date().toLocaleTimeString()
 
   setTimeout(update, 1000)
 })()
+
 ;(function update() {
   const now = new Date()
   const tomorrow = new Date(
@@ -61,6 +69,8 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     console.log(post)
 
     bg.src = post.url
+    attrSource.textContent = decodeHtml(post.title)
+    attrSource.href = `https://redd.it/${post.id}`
   })
 
 // chrome.identity.launchWebAuthFlow(
