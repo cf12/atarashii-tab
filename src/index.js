@@ -1,14 +1,14 @@
-import './index.scss'
+import "./index.scss"
 
 const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
 const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
 
-function decodeHtml (html) {
-  let txt = document.createElement("textarea");
-  txt.innerHTML = html;
-  return txt.value;
+function decodeHtml(html) {
+  let txt = document.createElement("textarea")
+  txt.innerHTML = html
+  return txt.value
 }
 
 ;(function update() {
@@ -68,9 +68,8 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     console.log(img)
 
     bg.src = decodeHtml(img.url)
-    attrSource.textContent = title.length > 48
-      ? title.slice(0, 49) + ' ...'
-      : title
+    attrSource.textContent =
+      title.length > 48 ? title.slice(0, 49) + " ..." : title
     attrSource.href = `https://redd.it/${post.id}`
   })
 
