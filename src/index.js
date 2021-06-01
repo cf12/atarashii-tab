@@ -1,3 +1,5 @@
+import './index.scss'
+
 const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
 const attrSource = document.querySelector(".attr-source")
