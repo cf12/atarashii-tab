@@ -1,26 +1,64 @@
-const bg = document.querySelector('.bg')
+const bg = document.querySelector(".bg")
+const time = document.querySelector(".time")
+const date = document.querySelector(".date")
 
-bg.addEventListener('load', () => {
-  bg.classList.add('load')
-}, false)
+;(function update() {
+  time.textContent = new Date().toLocaleTimeString()
 
+  setTimeout(update, 1000)
+})()
+;(function update() {
+  const now = new Date()
+  const tomorrow = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1
+  )
+
+  date.textContent = now.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  })
+
+  console.log(now.toLocaleString())
+  console.log(tomorrow.toLocaleString())
+
+  const delta = tomorrow - now
+  console.log(delta)
+
+  setTimeout(update, delta)
+})()
+
+bg.addEventListener(
+  "load",
+  () => {
+    bg.classList.add("load")
+  },
+  false
+)
 
 const query = new URLSearchParams({
   q: 'flair:"Desktop"',
-  restrict_sr: 1
+  count: 25,
+  sort: "top",
+  t: "all",
+  restrict_sr: 1,
 })
 
 fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
-  .then(res => res.json())
-  .then(data => {
+  .then((res) => res.json())
+  .then((data) => {
     const posts = data.data.children
+    console.log(posts)
 
     let post
 
     do {
       post = posts[Math.floor(Math.random() * posts.length)].data
-      console.log(post.url)
-    } while (post && !post.url.includes('i.redd.it'))
+    } while (post && !post.url.includes("i.redd.it"))
+
+    console.log(post)
 
     bg.src = post.url
   })

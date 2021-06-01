@@ -1,13 +1,17 @@
+/* TODO: Distribute fonts locally */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
 @keyframes load {
   from {
     opacity: 0;
-    transform: scale3d(0.98);
-    filter: blur(20px);
+    transform: scale(1.2);
+    filter: blur(16px);
   }
 
   to {
     opacity: 1;
-    transform: scale3d(1);
+    transform: scale(1.1);
     filter: blur(0);
   }
 }
@@ -18,11 +22,61 @@ body {
 
   margin: 0;
 
-  background-color: black;
+  background-color: #333;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+
+  color: white;
+}
+
+.content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(0, 0, 0, 50%);
+}
+
+.tl {
+  position: absolute;
+  top: 3rem;
+  left: 3rem;
+}
+
+.tr {
+  position: absolute;
+  top: 3rem;
+  right: 3rem;
+}
+
+.bl {
+  position: absolute;
+  bottom: 3rem;
+  left: 3rem;
+}
+
+.br {
+  position: absolute;
+  bottom: 3rem;
+  right: 3rem;
+}
+
+.time, .date {
+  font-family: 'Montserrat', sans-serif;
+
+  text-shadow: .075em .075em black;
+  text-transform: uppercase;
+
+  margin: 0;
+}
+
+.time {
+  font-size: 4rem;
+}
+
+.date {
+  font-size: 1.5rem;
+  margin-top: 8px;
 }
 
 .bg {
@@ -34,10 +88,12 @@ body {
   box-sizing: border-box;
   object-fit: cover;
 
+  transform-origin: center;
+
   opacity: 0;
 }
 
 .load {
-  animation: load 500ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  animation: load 500ms ease;
   animation-fill-mode: forwards;
 }
