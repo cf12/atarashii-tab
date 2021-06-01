@@ -1,4 +1,5 @@
 import "./index.scss"
+import 'normalize.css'
 
 const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
@@ -44,14 +45,18 @@ bg.addEventListener(
 
 const query = new URLSearchParams({
   q: 'flair:"Desktop"',
-  count: 25,
-  sort: "top",
+  count: '5',
+  sort: "new",
   t: "month",
+  show: 'all',
   restrict_sr: 1,
 })
 
 fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
-  .then((res) => res.json())
+  .then((res) => {
+    console.log(res)
+    return res.json()
+  })
   .then((data) => {
     const posts = data.data.children
     console.log(posts)
@@ -68,9 +73,7 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     console.log(img)
 
     bg.src = decodeHtml(img.url)
-    attrSource.textContent =
-      title.length > 48 ? title.slice(0, 49) + " ..." : title
-    attrSource.href = `https://redd.it/${post.id}`
+    attrSource.textContent = attrSource.href = `https://redd.it/${post.id}`
   })
 
 // chrome.identity.launchWebAuthFlow(
