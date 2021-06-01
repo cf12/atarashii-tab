@@ -120,6 +120,7 @@ a:hover {
   object-fit: cover;
 
   transform-origin: center;
+  user-select: none;
 
   opacity: 0;
 }
