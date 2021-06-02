@@ -17,7 +17,7 @@ const detailsTitle = document.querySelector('.details-title')
 const detailsRes = document.querySelector('.details-res')
 
 const icons = document.querySelector('.icons')
-const iconsUrlField = icons.querySelector('input[type=hidden]')
+const iconsHiddenField = icons.querySelector('input[type=hidden]')
 
 function decodeHtml(html) {
   let txt = document.createElement("textarea")
@@ -115,8 +115,8 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       .addEventListener('click', () => {
         icons.method = 'POST'
         icons.action = 'https://saucenao.com/search.php'
-        iconsUrlField.name = 'url'
-        iconsUrlField.value = post.url
+        iconsHiddenField.name = 'url'
+        iconsHiddenField.value = post.url
       })
 
     icons
@@ -124,8 +124,8 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       .addEventListener('click', () => {
         icons.method = 'POST'
         icons.action = 'https://iqdb.org/'
-        iconsUrlField.name = 'url'
-        iconsUrlField.value = post.url
+        iconsHiddenField.name = 'url'
+        iconsHiddenField.value = post.url
       })
 
     icons
@@ -133,8 +133,8 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       .addEventListener('click', () => {
         icons.method = 'POST'
         icons.action = 'https://ascii2d.net/search/uri'
-        iconsUrlField.name = 'uri'
-        iconsUrlField.value = post.url
+        iconsHiddenField.name = 'uri'
+        iconsHiddenField.value = post.url
       })
   })
 
