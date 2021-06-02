@@ -2,8 +2,8 @@
 import "./index.scss"
 
 import "normalize.css"
-import 'nprogress/nprogress.css'
-import NProgress from 'nprogress/nprogress'
+import "nprogress/nprogress.css"
+import NProgress from "nprogress/nprogress"
 
 import "@fortawesome/fontawesome-free/js/fontawesome"
 import "@fortawesome/fontawesome-free/js/brands"
@@ -14,12 +14,28 @@ const time = document.querySelector(".time")
 const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
 const content = document.querySelector(".content")
+const icons = document.querySelector(".icons")
 
 const detailsTitle = document.querySelector(".details-title")
 const detailsRes = document.querySelector(".details-res")
 
-const icons = document.querySelector(".icons")
-const iconsHiddenField = icons.querySelector("input[type=hidden]")
+const setupIconsForm = (method, url, data = {}) => {
+  icons.reset()
+
+  icons.method = method
+  icons.action = url
+
+  for (const key in data) {
+    const node = document.createElement("input")
+    node.type = "hidden"
+    node.name = key
+    node.value = data[key]
+
+    console.log(node)
+
+    icons.appendChild(node)
+  }
+}
 
 // https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
 Image.prototype.load = function (url) {
@@ -32,7 +48,7 @@ Image.prototype.load = function (url) {
     thisImg.src = window.URL.createObjectURL(blob)
   }
   xmlHTTP.onprogress = function (e) {
-    console.log('asd')
+    console.log("asd")
     thisImg.completedPercentage = parseInt((e.loaded / e.total) * 100)
     NProgress.set(e.loaded / e.total)
   }
@@ -123,44 +139,41 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
 
     parts.unshift(title)
 
+    icons
+      .querySelector("button[service=reddit]")
+      .addEventListener("click", () => {
+        setupIconsForm("GET", redditUrl)
+      })
+
+    icons
+      .querySelector("button[service=saucenao]")
+      .addEventListener("click", () => {
+        setupIconsForm("POST", "https://saucenao.com/search.php", {
+          url: post.url,
+        })
+      })
+
+    icons
+      .querySelector("button[service=iqdb]")
+      .addEventListener("click", () => {
+        setupIconsForm("POST", "https://iqdb.org/", {
+          url: post.url,
+        })
+      })
+
+    icons
+      .querySelector("button[service=ascii2d]")
+      .addEventListener("click", () => {
+        setupIconsForm("POST", "https://ascii2d.net/search/uri", {
+          uri: post.url,
+        })
+      })
+
     detailsTitle.textContent = parts.join(" • ")
     detailsRes.textContent = resolution || ""
 
     bg.src = post.url
     attrSource.textContent = attrSource.href = redditUrl
-
-    icons
-      .querySelector("button[type=submit][service=reddit]")
-      .addEventListener("click", () => {
-        icons.action = redditUrl
-      })
-
-    icons
-      .querySelector("button[type=submit][service=saucenao]")
-      .addEventListener("click", () => {
-        icons.method = "POST"
-        icons.action = "https://saucenao.com/search.php"
-        iconsHiddenField.name = "url"
-        iconsHiddenField.value = post.url
-      })
-
-    icons
-      .querySelector("button[type=submit][service=iqdb]")
-      .addEventListener("click", () => {
-        icons.method = "POST"
-        icons.action = "https://iqdb.org/"
-        iconsHiddenField.name = "url"
-        iconsHiddenField.value = post.url
-      })
-
-    icons
-      .querySelector("button[type=submit][service=ascii2d]")
-      .addEventListener("click", () => {
-        icons.method = "POST"
-        icons.action = "https://ascii2d.net/search/uri"
-        iconsHiddenField.name = "uri"
-        iconsHiddenField.value = post.url
-      })
   })
 
 // chrome.identity.launchWebAuthFlow(
