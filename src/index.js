@@ -59,8 +59,8 @@ bg.addEventListener(
 const query = new URLSearchParams({
   q: 'flair:"Desktop"',
   count: '5',
-  sort: "new",
-  t: "month",
+  sort: "top",
+  t: "all",
   show: 'all',
   restrict_sr: 1,
 })
@@ -81,9 +81,9 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     let title = decodeHtml(post.title)
     let parts = []
 
-    parts.push(title.match(/\[.*?\]/g)?.[0])
-    parts.push(title.match(/\(.*?\)/g)?.[0])
-    parts.push(title.match(/\{.*?\}/g)?.[0])
+    parts = parts.concat(title.match(/\[.*?\]/g))
+    parts = parts.concat(title.match(/\(.*?\)/g))
+    parts = parts.concat(title.match(/\{.*?\}/g))
     parts = parts.filter(e => !!e)
     const cutoff = Math.min(...parts.map(e => title.indexOf(e)))
     parts = parts.map(e => e.slice(1, -1))
