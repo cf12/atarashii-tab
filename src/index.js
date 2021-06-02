@@ -11,7 +11,8 @@ const time = document.querySelector(".time")
 const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
 
-const details = document.querySelector('.details')
+const detailsTitle = document.querySelector('.details-title')
+const detailsRes = document.querySelector('.details-res')
 
 function decodeHtml(html) {
   let txt = document.createElement("textarea")
@@ -69,15 +70,29 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       post = posts[Math.floor(Math.random() * posts.length)].data
     } while (post && !post.url.includes("i.redd.it"))
 
-    const title = decodeHtml(post.title)
+    let title = decodeHtml(post.title)
+    let parts = []
 
+    parts.push(title.match(/\[.*?\]/g)?.[0])
+    parts.push(title.match(/\(.*?\)/g)?.[0])
+    parts.push(title.match(/\{.*?\}/g)?.[0])
+    parts = parts.filter(e => !!e)
+    const cutoff = Math.min(...parts.map(e => title.indexOf(e)))
+    parts = parts.map(e => e.slice(1, -1))
+    title = title.slice(0, cutoff).trim()
 
-    // details.innerHTML += `
-    //   <p>${title.match(/.*(\[\()?/)[0]?.slice(0, -1).trim()}</p>
-    //   <p>${title.match(/\[.*\]/)[0]?.slice(1, -1).trim()}</p>
-    //   <p>${title.match(/\(.*\)/)[0]?.slice(1, -1).trim()}</p>
-    // `
+    let resolution = parts.filter(e => e.match(/\d+x\d+/g))?.[0]
 
+    if (resolution) {
+      parts.splice(parts.indexOf(resolution), 1)
+      resolution = resolution.split('x').join(' x ')
+    }
+
+    console.log(resolution)
+    parts.unshift(title)
+
+    detailsTitle.textContent = parts.join(' • ')
+    detailsRes.textContent = resolution || ''
 
     bg.src = post.url
     attrSource.textContent = attrSource.href = `https://redd.it/${post.id}`

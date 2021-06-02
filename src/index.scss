@@ -16,6 +16,12 @@
   }
 }
 
+@keyframes blink {
+  0% { visibility: visible }
+  50% { visibility: hidden }
+  100% { visibility: visible }
+}
+
 body {
   width: 100%;
   height: 100vh;
@@ -64,8 +70,6 @@ a {
     font-size: 1rem;
     font-weight: 500;
 
-    line-height: 200%;
-
     color: rgba(white, 80%);
   }
 
@@ -91,16 +95,14 @@ a {
 
     .date {
       font-size: 1.5rem;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .details {
-      display: flex;
-      gap: 12px;
+      display: inline-flex;
+      flex-direction: column;
 
-      & > span {
-        font-size: 1rem;
-      }
+      line-height: 225%;
     }
   }
 
@@ -108,6 +110,10 @@ a {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+
+    .attr {
+      line-height: 200%;
+    }
   }
 }
 
