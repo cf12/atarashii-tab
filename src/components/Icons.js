@@ -1,5 +1,7 @@
 import React, { useState } from "react"
 
+import './styles/Icons.scss'
+
 export default ({ link, url }) => {
   const [data, setData] = useState({
     method: "GET",

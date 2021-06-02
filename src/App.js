@@ -13,6 +13,9 @@ export default () => {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
+    // TODO: Pagination + display number of results on main page
+    // TODO: Allow user customization for parameters
+    // TODO: Cache results every 12hr / 24hr
     const query = new URLSearchParams({
       q: 'flair:"Desktop"',
       count: "5",

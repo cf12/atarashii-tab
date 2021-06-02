@@ -1,0 +1,29 @@
+.icons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  & > button {
+    background: none;
+    outline: none;
+    border: none;
+    padding: 0;
+
+    user-select: none;
+
+    & > img {
+      width: 24px;
+      height: 24px;
+
+      transition: all 100ms ease;
+    }
+
+    &:hover {
+      cursor: pointer;
+
+      & > img {
+        transform: scale(1.1);
+      }
+    }
+  }
+}

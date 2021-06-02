@@ -98,26 +98,6 @@ a {
   }
 
   & > header {
-    .time,
-    .date {
-      font-family: "Montserrat", sans-serif;
-
-      text-shadow: 0.075em 0.075em black;
-      text-transform: uppercase;
-
-      margin: 0;
-    }
-
-    .time {
-      font-size: 4rem;
-      margin-bottom: 8px;
-    }
-
-    .date {
-      font-size: 1.5rem;
-      margin-bottom: 28px;
-    }
-
     .details {
       display: inline-flex;
       flex-direction: column;
@@ -125,37 +105,6 @@ a {
       line-height: 225%;
 
       margin-bottom: 12px;
-    }
-
-    .icons {
-      display: flex;
-      flex-direction: row;
-      gap: 12px;
-
-      & > button {
-        background: none;
-        outline: none;
-        border: none;
-        padding: 0;
-
-        user-select: none;
-
-
-        & > img {
-          width: 24px;
-          height: 24px;
-
-          transition: all 100ms ease;
-        }
-
-        &:hover {
-          cursor: pointer;
-
-          & > img {
-            transform: scale(1.1);
-          }
-        }
-      }
     }
   }
 

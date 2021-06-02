@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 
+import './styles/TimeDate.scss'
+
 export default () => {
   const [now, setNow] = useState(new Date())
 
@@ -16,6 +18,7 @@ export default () => {
           second: undefined,
         })}
       </h1>
+
       <h2 className="date">
         {now.toLocaleDateString(undefined, {
           weekday: "long",
