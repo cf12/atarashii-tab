@@ -16,6 +16,9 @@ const content = document.querySelector(".content")
 const detailsTitle = document.querySelector('.details-title')
 const detailsRes = document.querySelector('.details-res')
 
+const icons = document.querySelector('.icons')
+const iconsUrlField = icons.querySelector('input[type=hidden]')
+
 function decodeHtml(html) {
   let txt = document.createElement("textarea")
   txt.innerHTML = html
@@ -49,6 +52,7 @@ bg.addEventListener(
   false
 )
 
+
 // TODO: Pagination + display number of results on main page
 // TODO: Allow user customization for parameters
 // TODO: Cache results every 12hr / 24hr
@@ -73,6 +77,7 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       post = posts[Math.floor(Math.random() * posts.length)].data
     } while (post && !post.url.includes("i.redd.it"))
 
+    const redditUrl = `https://redd.it/${post.id}`
     let title = decodeHtml(post.title)
     let parts = []
 
@@ -97,7 +102,40 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     detailsRes.textContent = resolution || ''
 
     bg.src = post.url
-    attrSource.textContent = attrSource.href = `https://redd.it/${post.id}`
+    attrSource.textContent = attrSource.href = redditUrl
+
+    icons
+      .querySelector('button[type=submit][service=reddit]')
+      .addEventListener('click', () => {
+        icons.action = redditUrl
+      })
+
+    icons
+      .querySelector('button[type=submit][service=saucenao]')
+      .addEventListener('click', () => {
+        icons.method = 'POST'
+        icons.action = 'https://saucenao.com/search.php'
+        iconsUrlField.name = 'url'
+        iconsUrlField.value = post.url
+      })
+
+    icons
+      .querySelector('button[type=submit][service=iqdb]')
+      .addEventListener('click', () => {
+        icons.method = 'POST'
+        icons.action = 'https://iqdb.org/'
+        iconsUrlField.name = 'url'
+        iconsUrlField.value = post.url
+      })
+
+    icons
+      .querySelector('button[type=submit][service=ascii2d]')
+      .addEventListener('click', () => {
+        icons.method = 'POST'
+        icons.action = 'https://ascii2d.net/search/uri'
+        iconsUrlField.name = 'uri'
+        iconsUrlField.value = post.url
+      })
   })
 
 // chrome.identity.launchWebAuthFlow(

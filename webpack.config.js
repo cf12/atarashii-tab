@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackInlineSVGPlugin = require('html-webpack-inline-svg-plugin');
 
 module.exports = {
   entry: "./src/index.js",
@@ -13,9 +14,11 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({ template: "./src/index.html" }),
+    new HtmlWebpackInlineSVGPlugin(),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "./src/manifest.json" }
+        { from: "./src/manifest.json" },
+        { from: "./src/images", to: 'images' }
       ],
     }),
     new MiniCssExtractPlugin()
