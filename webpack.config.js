@@ -42,4 +42,8 @@ module.exports = {
       },
     ],
   },
+  // https://stackoverflow.com/questions/61462586
+  devtool: process.env.NODE_ENV === 'development'
+    ? 'inline-source-map'
+    : false
 }
