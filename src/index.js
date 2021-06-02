@@ -22,6 +22,9 @@ const detailsRes = document.querySelector(".details-res")
 const setupIconsForm = (method, url, data = {}) => {
   icons.reset()
 
+  icons.querySelectorAll('input[type=hidden]')
+    .forEach(node => icons.removeChild(node))
+
   icons.method = method
   icons.action = url
 
@@ -30,8 +33,6 @@ const setupIconsForm = (method, url, data = {}) => {
     node.type = "hidden"
     node.name = key
     node.value = data[key]
-
-    console.log(node)
 
     icons.appendChild(node)
   }
