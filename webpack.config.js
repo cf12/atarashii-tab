@@ -15,8 +15,7 @@ module.exports = {
     new HtmlWebpackPlugin({ template: "./src/index.html" }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "./src/manifest.json" },
-        { from: "./src/images", to: 'images/'}
+        { from: "./src/manifest.json" }
       ],
     }),
     new MiniCssExtractPlugin()
@@ -33,7 +32,7 @@ module.exports = {
       },
       {
         test: /\.m?js$/,
-        exclude: /(node_modules|bower_components)/,
+        include: path.resolve(__dirname, 'src'),
         use: {
           loader: "babel-loader",
           options: {
