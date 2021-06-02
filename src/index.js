@@ -1,11 +1,13 @@
 // TODO: XSS possible through reddit -- sanitize all inputs
 import "./index.scss"
 
-import 'normalize.css'
+import "normalize.css"
+import 'nprogress/nprogress.css'
+import NProgress from 'nprogress/nprogress'
 
-import '@fortawesome/fontawesome-free/js/fontawesome'
-import '@fortawesome/fontawesome-free/js/brands'
-import '@fortawesome/fontawesome-free/js/solid'
+import "@fortawesome/fontawesome-free/js/fontawesome"
+import "@fortawesome/fontawesome-free/js/brands"
+import "@fortawesome/fontawesome-free/js/solid"
 
 const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
@@ -13,11 +15,34 @@ const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
 const content = document.querySelector(".content")
 
-const detailsTitle = document.querySelector('.details-title')
-const detailsRes = document.querySelector('.details-res')
+const detailsTitle = document.querySelector(".details-title")
+const detailsRes = document.querySelector(".details-res")
 
-const icons = document.querySelector('.icons')
-const iconsHiddenField = icons.querySelector('input[type=hidden]')
+const icons = document.querySelector(".icons")
+const iconsHiddenField = icons.querySelector("input[type=hidden]")
+
+// https://stackoverflow.com/questions/14218607/javascript-loading-progress-of-an-image
+Image.prototype.load = function (url) {
+  var thisImg = this
+  var xmlHTTP = new XMLHttpRequest()
+  xmlHTTP.open("GET", url, true)
+  xmlHTTP.responseType = "arraybuffer"
+  xmlHTTP.onload = function (e) {
+    var blob = new Blob([this.response])
+    thisImg.src = window.URL.createObjectURL(blob)
+  }
+  xmlHTTP.onprogress = function (e) {
+    console.log('asd')
+    thisImg.completedPercentage = parseInt((e.loaded / e.total) * 100)
+    NProgress.set(e.loaded / e.total)
+  }
+  xmlHTTP.onloadstart = function () {
+    thisImg.completedPercentage = 0
+  }
+  xmlHTTP.send()
+}
+
+Image.prototype.completedPercentage = 0
 
 function decodeHtml(html) {
   let txt = document.createElement("textarea")
@@ -29,9 +54,9 @@ function decodeHtml(html) {
   const now = new Date()
 
   time.textContent = now.toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: 'numeric',
-    second: undefined
+    hour: "numeric",
+    minute: "numeric",
+    second: undefined,
   })
 
   date.textContent = now.toLocaleDateString(undefined, {
@@ -52,16 +77,15 @@ bg.addEventListener(
   false
 )
 
-
 // TODO: Pagination + display number of results on main page
 // TODO: Allow user customization for parameters
 // TODO: Cache results every 12hr / 24hr
 const query = new URLSearchParams({
   q: 'flair:"Desktop"',
-  count: '5',
+  count: "5",
   sort: "top",
   t: "all",
-  show: 'all',
+  show: "all",
   restrict_sr: 1,
 })
 
@@ -81,59 +105,60 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     let title = decodeHtml(post.title)
     let parts = []
 
+    // TODO: Optimize into one match?
     parts = parts.concat(title.match(/\[.*?\]/g))
     parts = parts.concat(title.match(/\(.*?\)/g))
     parts = parts.concat(title.match(/\{.*?\}/g))
-    parts = parts.filter(e => !!e)
-    const cutoff = Math.min(...parts.map(e => title.indexOf(e)))
-    parts = parts.map(e => e.slice(1, -1))
+    parts = parts.filter((e) => !!e)
+    const cutoff = Math.min(...parts.map((e) => title.indexOf(e)))
+    parts = parts.map((e) => e.slice(1, -1))
     title = '"' + title.slice(0, cutoff).trim() + '"'
 
-    let resolution = parts.filter(e => e.match(/\d+[x×*]\d+/g))?.[0]
+    let resolution = parts.filter((e) => e.match(/\d+[x×*]\d+/g))?.[0]
 
     if (resolution) {
       parts.splice(parts.indexOf(resolution), 1)
-      resolution = resolution.split(/[x×*]/).join(' × ')
+      resolution = resolution.split(/[x×*]/).join(" × ")
     }
 
     parts.unshift(title)
 
-    detailsTitle.textContent = parts.join(' • ')
-    detailsRes.textContent = resolution || ''
+    detailsTitle.textContent = parts.join(" • ")
+    detailsRes.textContent = resolution || ""
 
     bg.src = post.url
     attrSource.textContent = attrSource.href = redditUrl
 
     icons
-      .querySelector('button[type=submit][service=reddit]')
-      .addEventListener('click', () => {
+      .querySelector("button[type=submit][service=reddit]")
+      .addEventListener("click", () => {
         icons.action = redditUrl
       })
 
     icons
-      .querySelector('button[type=submit][service=saucenao]')
-      .addEventListener('click', () => {
-        icons.method = 'POST'
-        icons.action = 'https://saucenao.com/search.php'
-        iconsHiddenField.name = 'url'
+      .querySelector("button[type=submit][service=saucenao]")
+      .addEventListener("click", () => {
+        icons.method = "POST"
+        icons.action = "https://saucenao.com/search.php"
+        iconsHiddenField.name = "url"
         iconsHiddenField.value = post.url
       })
 
     icons
-      .querySelector('button[type=submit][service=iqdb]')
-      .addEventListener('click', () => {
-        icons.method = 'POST'
-        icons.action = 'https://iqdb.org/'
-        iconsHiddenField.name = 'url'
+      .querySelector("button[type=submit][service=iqdb]")
+      .addEventListener("click", () => {
+        icons.method = "POST"
+        icons.action = "https://iqdb.org/"
+        iconsHiddenField.name = "url"
         iconsHiddenField.value = post.url
       })
 
     icons
-      .querySelector('button[type=submit][service=ascii2d]')
-      .addEventListener('click', () => {
-        icons.method = 'POST'
-        icons.action = 'https://ascii2d.net/search/uri'
-        iconsHiddenField.name = 'uri'
+      .querySelector("button[type=submit][service=ascii2d]")
+      .addEventListener("click", () => {
+        icons.method = "POST"
+        icons.action = "https://ascii2d.net/search/uri"
+        iconsHiddenField.name = "uri"
         iconsHiddenField.value = post.url
       })
   })

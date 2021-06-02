@@ -38,6 +38,7 @@
     "css-loader": "^5.2.6",
     "ionicons": "^5.5.1",
     "normalize.css": "^8.0.1",
+    "nprogress": "^0.2.0",
     "raw-loader": "^4.0.2",
     "style-loader": "^2.0.0"
   }

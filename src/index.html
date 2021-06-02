@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>New Tab</title>
+
+    <script integrity="sha256-D42eh25PrYzF8cOthDHS10VXOr6/0jEZshim2liKiYk=">
+
+Image.prototype.load = function (url) {
+  var thisImg = this
+  var xmlHTTP = new XMLHttpRequest()
+  xmlHTTP.open("GET", url, true)
+  xmlHTTP.responseType = "arraybuffer"
+  xmlHTTP.onload = function (e) {
+    var blob = new Blob([this.response])
+    thisImg.src = window.URL.createObjectURL(blob)
+  }
+  xmlHTTP.onprogress = function (e) {
+    console.log('asd')
+    thisImg.completedPercentage = parseInt((e.loaded / e.total) * 100)
+    NProgress.set(e.loaded / e.total)
+  }
+  xmlHTTP.onloadstart = function () {
+    thisImg.completedPercentage = 0
+  }
+  xmlHTTP.send()
+}
+
+    </script>
   </head>
   <body>
     <div class="content">

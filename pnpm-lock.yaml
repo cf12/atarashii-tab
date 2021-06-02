@@ -15,6 +15,7 @@ specifiers:
   ionicons: ^5.5.1
   mini-css-extract-plugin: ^1.6.0
   normalize.css: ^8.0.1
+  nprogress: ^0.2.0
   raw-loader: ^4.0.2
   sass: ^1.34.0
   sass-loader: ^11.1.1
@@ -28,6 +29,7 @@ dependencies:
   css-loader: 5.2.6_webpack@5.38.1
   ionicons: 5.5.1
   normalize.css: 8.0.1
+  nprogress: 0.2.0
   raw-loader: 4.0.2_webpack@5.38.1
   style-loader: 2.0.0_webpack@5.38.1
 
@@ -2669,6 +2671,10 @@ packages:
     dependencies:
       path-key: 3.1.1
     dev: true
+
+  /nprogress/0.2.0:
+    resolution: {integrity: sha1-y480xTIT2JVyP8urkH6UIq28r7E=}
+    dev: false
 
   /nth-check/1.0.2:
     resolution: {integrity: sha512-WeBOdju8SnzPN5vTUJYxYUxLeXpCaVP5i5e0LF8fg7WORF2Wd7wFX/pk0tYZk7s8T+J7VLy0Da6J1+wCT0AtHg==}
