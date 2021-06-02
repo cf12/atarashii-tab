@@ -37,6 +37,7 @@
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "css-loader": "^5.2.6",
+    "html-entities": "^2.3.2",
     "ionicons": "^5.5.1",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",

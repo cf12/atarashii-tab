@@ -10,6 +10,7 @@ specifiers:
   clean-webpack-plugin: ^4.0.0-alpha.0
   copy-webpack-plugin: ^9.0.0
   css-loader: ^5.2.6
+  html-entities: ^2.3.2
   html-loader: ^2.1.2
   html-webpack-inline-svg-plugin: ^2.3.0
   html-webpack-plugin: ^5.3.1
@@ -31,6 +32,7 @@ dependencies:
   '@fortawesome/fontawesome-free': 5.15.3
   '@fortawesome/fontawesome-svg-core': 1.2.35
   css-loader: 5.2.6_webpack@5.38.1
+  html-entities: 2.3.2
   ionicons: 5.5.1
   normalize.css: 8.0.1
   nprogress: 0.2.0
@@ -2267,6 +2269,10 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
     dev: true
+
+  /html-entities/2.3.2:
+    resolution: {integrity: sha512-c3Ab/url5ksaT0WyleslpBEthOzWhrjQbg75y7XUsfSzi3Dgzt0l8w5e7DylRn15MTlMMD58dTfzddNS2kcAjQ==}
+    dev: false
 
   /html-loader/2.1.2_webpack@5.38.1:
     resolution: {integrity: sha512-XB4O1+6mpLp4qy/3qg5+1QPZ/uXvWtO64hNAX87sKHwcHkp1LJGU7V3sJ9iVmRACElAZXQ4YOO/Lbkx5kYfl9A==}

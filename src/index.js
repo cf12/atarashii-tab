@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { render } from "react-dom"
 import { FaReddit } from "react-icons/fa"
+import { decode } from 'html-entities'
 
 import TimeDate from "./components/TimeDate"
 import Icons from "./components/Icons"
@@ -12,9 +13,6 @@ import "./index.scss"
 const App = () => {
   const [data, setData] = useState(null)
   const [loaded, setLoaded] = useState(false)
-
-  console.log(data)
-  console.log(loaded)
 
   useEffect(() => {
     const query = new URLSearchParams({
@@ -39,7 +37,7 @@ const App = () => {
         } while (post && !post.url.includes("i.redd.it"))
 
         const link = `https://redd.it/${post.id}`
-        let title = post.title
+        let title = decode(post.title)
         // TODO: Optimize into one match?
         let parts = []
           .concat(title.match(/\[.*?\]/g))
@@ -50,7 +48,7 @@ const App = () => {
         parts = parts.map((e) => e.slice(1, -1))
         title = '"' + title.slice(0, cutoff).trim() + '"'
 
-        let resolution = parts.filter((e) => e.match(/\d+[x×*]\d+/g))?.[0]
+        let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
 
         if (resolution) {
           parts.splice(parts.indexOf(resolution), 1)
