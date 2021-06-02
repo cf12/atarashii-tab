@@ -163,6 +163,24 @@ a {
     align-items: flex-end;
 
     .attr {
+      font-weight: 500;
+
+      .attr-from {
+        a {
+          color: white;
+          font-weight: bold;
+          text-decoration: none;
+
+          &:hover {
+            color: #ffc400;
+          }
+        }
+
+        svg {
+          vertical-align: bottom;
+        }
+      }
+
       .attr-bottom {
         color: white;
         font-size: 0.8rem;
@@ -199,9 +217,10 @@ a {
   opacity: 0;
 }
 
-.load-bg {
+.to-load-bg {
   animation: load-bg 500ms ease;
-  animation-fill-mode: forwards;
+  animation-fill-mode: both;
+  animation-play-state: paused;
 }
 
 .to-load {
