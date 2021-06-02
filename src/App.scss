@@ -65,6 +65,8 @@ mark {
 a {
   color: #ffc400;
 
+  transition: color 100ms ease;
+
   &:hover {
     color: white;
   }
@@ -163,6 +165,8 @@ a {
     align-items: flex-end;
 
     .attr {
+      position: relative;
+
       font-weight: 500;
 
       .attr-from {
@@ -187,8 +191,10 @@ a {
         margin-top: 8px;
       }
 
-      // TODO: Spinner
       .attr-loader {
+        position: absolute;
+        bottom: 32px;
+        left: 0;
       }
     }
   }

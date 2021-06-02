@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react"
+import { decode } from "html-entities"
 import { FaReddit } from "react-icons/fa"
-import { decode } from 'html-entities'
+import { PuffLoader } from "react-spinners"
 
 import TimeDate from "./components/TimeDate"
 import Icons from "./components/Icons"
@@ -45,7 +46,9 @@ export default () => {
         parts = parts.map((e) => e.slice(1, -1))
         title = '"' + title.slice(0, cutoff).trim() + '"'
 
-        let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
+        let resolution = parts.filter((e) =>
+          e.match(/[\d\s]+[x×*][\d\s]+/g)
+        )?.[0]
 
         if (resolution) {
           parts.splice(parts.indexOf(resolution), 1)
@@ -85,10 +88,16 @@ export default () => {
                 <FaReddit size={20} /> r/Animewallpaper
               </a>
             </p>
+
             <p className="attr-bottom to-load to-delay-4">
               <a href={data?.link}>{data?.link}</a>
             </p>
-            {/* <div className="attr-loader"></div> */}
+
+            {!loaded && (
+              <span className="attr-loader">
+                <PuffLoader color="white" size={24} />
+              </span>
+            )}
           </div>
 
           <div className="credits to-right">
