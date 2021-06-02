@@ -1,3 +1,4 @@
+// TODO: XSS possible through reddit -- sanitize all inputs
 import "./index.scss"
 
 import 'normalize.css'
@@ -10,6 +11,7 @@ const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
 const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
+const content = document.querySelector(".content")
 
 const detailsTitle = document.querySelector('.details-title')
 const detailsRes = document.querySelector('.details-res')
@@ -41,7 +43,8 @@ function decodeHtml(html) {
 bg.addEventListener(
   "load",
   () => {
-    bg.classList.add("load")
+    bg.classList.add("load-bg")
+    content.classList.add("load")
   },
   false
 )
@@ -79,16 +82,15 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
     parts = parts.filter(e => !!e)
     const cutoff = Math.min(...parts.map(e => title.indexOf(e)))
     parts = parts.map(e => e.slice(1, -1))
-    title = title.slice(0, cutoff).trim()
+    title = '"' + title.slice(0, cutoff).trim() + '"'
 
-    let resolution = parts.filter(e => e.match(/\d+x\d+/g))?.[0]
+    let resolution = parts.filter(e => e.match(/\d+[x×*]\d+/g))?.[0]
 
     if (resolution) {
       parts.splice(parts.indexOf(resolution), 1)
-      resolution = resolution.split('x').join(' x ')
+      resolution = resolution.split(/[x×*]/).join(' × ')
     }
 
-    console.log(resolution)
     parts.unshift(title)
 
     detailsTitle.textContent = parts.join(' • ')

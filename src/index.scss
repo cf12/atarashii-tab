@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
-@keyframes load {
+@keyframes load-bg {
   from {
     opacity: 0;
     transform: scale(1.1);
@@ -13,6 +13,18 @@
     opacity: 1;
     transform: scale(1);
     filter: blur(0);
+  }
+}
+
+@keyframes load-text {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -112,7 +124,16 @@ a {
     align-items: flex-end;
 
     .attr {
-      line-height: 200%;
+      .attr-bottom {
+        color: white;
+        font-size: 0.8rem;
+        margin-top: 8px;
+      }
+
+      // TODO: Spinner
+      .attr-loader {
+
+      }
     }
   }
 }
@@ -140,7 +161,23 @@ a {
   opacity: 0;
 }
 
-.load {
-  animation: load 500ms ease;
+.load-bg {
+  animation: load-bg 500ms ease;
   animation-fill-mode: forwards;
+}
+
+.to-load {
+  animation: load-text 200ms ease;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+
+@for $i from 1 to 10 {
+  .to-delay-#{$i} {
+    animation-delay: #{$i * 100 + 100}ms;
+  }
+}
+
+.load * {
+  animation-play-state: running;
 }
