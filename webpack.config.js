@@ -17,8 +17,7 @@ module.exports = {
     new HtmlWebpackInlineSVGPlugin(),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "./src/manifest.json" },
-        { from: "./src/images", to: 'images' }
+        { from: "./src/manifest.json" }
       ],
     }),
     new MiniCssExtractPlugin()
