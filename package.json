@@ -32,6 +32,7 @@
     "webpack-cli": "^4.7.0"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
     "css-loader": "^5.2.6",
     "ionicons": "^5.5.1",
     "normalize.css": "^8.0.1",

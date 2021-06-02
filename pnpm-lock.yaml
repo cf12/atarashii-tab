@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@babel/core': ^7.14.3
   '@babel/preset-env': ^7.14.4
+  '@fortawesome/fontawesome-free': ^5.15.3
   babel-loader: ^8.2.2
   clean-webpack-plugin: ^4.0.0-alpha.0
   copy-webpack-plugin: ^9.0.0
@@ -19,6 +20,7 @@ specifiers:
   webpack-cli: ^4.7.0
 
 dependencies:
+  '@fortawesome/fontawesome-free': 5.15.3
   css-loader: 5.2.6_webpack@5.38.1
   ionicons: 5.5.1
   normalize.css: 8.0.1
@@ -1066,6 +1068,12 @@ packages:
     resolution: {integrity: sha512-Fxt+AfXgjMoin2maPIYzFZnQjAXjAL0PHscM5pRTtatFqB+vZxAM9tLp2Optnuw3QOQC40jTNeGYFOMvyf7v9g==}
     engines: {node: '>=10.0.0'}
     dev: true
+
+  /@fortawesome/fontawesome-free/5.15.3:
+    resolution: {integrity: sha512-rFnSUN/QOtnOAgqFRooTA3H57JLDm0QEG/jPdk+tLQNL/eWd+Aok8g3qCI+Q1xuDPWpGW/i9JySpJVsq8Q0s9w==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dev: false
 
   /@nodelib/fs.scandir/2.1.4:
     resolution: {integrity: sha512-33g3pMJk3bg5nXbL/+CY6I2eJDzZAni49PfJnL5fghPTggPvBd/pFNSgJsdAgWptuFu7qq/ERvOYFlhvsLTCKA==}

@@ -1,10 +1,17 @@
 import "./index.scss"
+
 import 'normalize.css'
+
+import '@fortawesome/fontawesome-free/js/fontawesome'
+import '@fortawesome/fontawesome-free/js/brands'
+import '@fortawesome/fontawesome-free/js/solid'
 
 const bg = document.querySelector(".bg")
 const time = document.querySelector(".time")
 const attrSource = document.querySelector(".attr-source")
 const date = document.querySelector(".date")
+
+const details = document.querySelector('.details')
 
 function decodeHtml(html) {
   let txt = document.createElement("textarea")
@@ -13,18 +20,13 @@ function decodeHtml(html) {
 }
 
 ;(function update() {
-  time.textContent = new Date().toLocaleTimeString()
-
-  setTimeout(update, 1000)
-})()
-
-;(function update() {
   const now = new Date()
-  const tomorrow = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1
-  )
+
+  time.textContent = now.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: undefined
+  })
 
   date.textContent = now.toLocaleDateString(undefined, {
     weekday: "long",
@@ -32,7 +34,7 @@ function decodeHtml(html) {
     day: "numeric",
   })
 
-  setTimeout(update, tomorrow - now)
+  setTimeout(update, 1000)
 })()
 
 bg.addEventListener(
@@ -43,6 +45,8 @@ bg.addEventListener(
   false
 )
 
+// TODO: Pagination + display number of results on main page
+// TODO: Allow user customization for parameters
 const query = new URLSearchParams({
   q: 'flair:"Desktop"',
   count: '5',
@@ -53,10 +57,7 @@ const query = new URLSearchParams({
 })
 
 fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
-  .then((res) => {
-    console.log(res)
-    return res.json()
-  })
+  .then((res) => res.json())
   .then((data) => {
     const posts = data.data.children
     console.log(posts)
@@ -67,12 +68,17 @@ fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
       post = posts[Math.floor(Math.random() * posts.length)].data
     } while (post && !post.url.includes("i.redd.it"))
 
-    const img = post.preview.images[0].resolutions.pop()
     const title = decodeHtml(post.title)
 
-    console.log(img)
 
-    bg.src = decodeHtml(img.url)
+    // details.innerHTML += `
+    //   <p>${title.match(/.*(\[\()?/)[0]?.slice(0, -1).trim()}</p>
+    //   <p>${title.match(/\[.*\]/)[0]?.slice(1, -1).trim()}</p>
+    //   <p>${title.match(/\(.*\)/)[0]?.slice(1, -1).trim()}</p>
+    // `
+
+
+    bg.src = post.url
     attrSource.textContent = attrSource.href = `https://redd.it/${post.id}`
   })
 
