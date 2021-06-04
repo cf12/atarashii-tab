@@ -25,66 +25,94 @@ export default () => {
     t: 'all',
   })
 
+  const [ cache, setCache ] = useLocalStorage('cache', {
+    lastUpdated: -1,
+    data: []
+  })
+
   useEffect(() => {
-    console.log(config)
     document.documentElement.style.setProperty('--primary', config.theme.primary)
   }, [config])
 
   useEffect(() => {
+    if (!cache)
+      return
+
+
     // TODO: Pagination + display number of results on main page
-    // TODO: Allow user customization for parameters
-    // TODO: Cache results every 12hr / 24hr
-    const query = new URLSearchParams({
-      q: 'flair:"Desktop"',
-      count: "5",
-      sort: config.sort,
-      t: config.t,
-      show: "all",
-      restrict_sr: 1,
-    })
 
-    fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const posts = data.data.children
-        console.log(posts)
+    async function run () {
+      let posts = []
 
-        let post
+      // Cache for 12 hours
+      if ((Date.now() - cache.lastUpdated) < (1000 * 60 * 60 * 12)) {
+        posts = cache.data
+      } else {
+        let after = null
 
-        do {
-          post = posts[Math.floor(Math.random() * posts.length)].data
-        } while (post && !post.url.includes("i.redd.it"))
+        while (posts.length < 100) {
+          const query = new URLSearchParams({
+            q: 'flair:"Desktop"',
+            count: "5",
+            sort: config.sort,
+            t: config.t,
+            show: "all",
+            restrict_sr: 1,
+            after
+          })
 
-        const link = `https://redd.it/${post.id}`
-        let title = decode(post.title)
-        // TODO: Optimize into one match?
-        let parts = []
-          .concat(title.match(/\[.*?\]/g))
-          .concat(title.match(/\(.*?\)/g))
-          .concat(title.match(/\{.*?\}/g))
-          .filter((e) => !!e)
-        const cutoff = Math.min(...parts.map((e) => title.indexOf(e)))
-        parts = parts.map((e) => e.slice(1, -1))
-        title = '"' + title.slice(0, cutoff).trim() + '"'
+          const res = await fetch(`https://www.reddit.com/r/Animewallpaper/search.json?${query}`)
+          const json = await res.json()
 
-        let resolution = parts.filter((e) =>
-          e.match(/[\d\s]+[x×*][\d\s]+/g)
-        )?.[0]
+          after = json.data.after
+          if (!after)
+            break
 
-        if (resolution) {
-          parts.splice(parts.indexOf(resolution), 1)
-          resolution = resolution.split(/[x×*]/).join(" × ")
+          // Collect posts w/ i.redd.it only
+          let tmpPosts = json.data.children
+            .map(e => e.data)
+            .filter(e => e.url.includes('i.redd.it'))
+
+          posts = posts.concat(tmpPosts)
         }
 
-        parts.unshift(title)
+        setCache({ lastUpdated: Date.now(), data: posts })
+      }
 
-        setData({
-          title: parts.join(" • "),
-          res: resolution || "",
-          url: post.url,
-          link,
-        })
+      const post = posts[Math.floor(Math.random() * posts.length)]
+      const link = `https://redd.it/${post.id}`
+
+      let title = decode(post.title)
+      // TODO: Optimize into one match?
+      let parts = []
+        .concat(title.match(/\[.*?\]/g))
+        .concat(title.match(/\(.*?\)/g))
+        .concat(title.match(/\{.*?\}/g))
+        .filter((e) => !!e)
+      const cutoff = Math.min(...parts.map((e) => title.indexOf(e)))
+      parts = parts.map((e) => e.slice(1, -1))
+      title = '"' + title.slice(0, cutoff).trim() + '"'
+
+      let resolution = parts.filter((e) =>
+        e.match(/[\d\s]+[x×*][\d\s]+/g)
+      )?.[0]
+
+      if (resolution) {
+        parts.splice(parts.indexOf(resolution), 1)
+        resolution = resolution.split(/[x×*]/).join(" × ")
+      }
+
+      parts.unshift(title)
+
+      setData({
+        title: parts.join(" • "),
+        res: resolution || "",
+        url: post.url,
+        link,
       })
+    }
+
+    run()
   }, [])
 
   return (
