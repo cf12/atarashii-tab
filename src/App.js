@@ -38,9 +38,6 @@ export default () => {
     if (!cache)
       return
 
-
-    // TODO: Pagination + display number of results on main page
-
     async function run () {
       let posts = []
 
@@ -79,7 +76,8 @@ export default () => {
         setCache({ lastUpdated: Date.now(), data: posts })
       }
 
-      const post = posts[Math.floor(Math.random() * posts.length)]
+      const num = Math.floor(Math.random() * posts.length)
+      const post = posts[num]
       const link = `https://redd.it/${post.id}`
 
       let title = decode(post.title)
@@ -109,6 +107,7 @@ export default () => {
         res: resolution || "",
         url: post.url,
         link,
+        num
       })
     }
 
@@ -145,6 +144,7 @@ export default () => {
             </p>
 
             <p className="attr-bottom to-load to-delay-4">
+              Post <strong>#{data?.num + 1}</strong> of <strong>{cache.data.length}</strong> •{" "}
               <a href={data?.link}>{data?.link}</a>
             </p>
 

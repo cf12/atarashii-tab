@@ -133,6 +133,10 @@ a {
     .attr {
       position: relative;
 
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
       font-weight: 500;
 
       .attr-from {
@@ -152,9 +156,7 @@ a {
       }
 
       .attr-bottom {
-        color: white;
         font-size: 0.8rem;
-        margin-top: 8px;
       }
 
       .attr-loader {
