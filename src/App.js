@@ -157,7 +157,7 @@ export default () => {
 
           <div className="credits to-right">
             <p>
-              Created with &lt;3 • <a href="https://github.com/cf12">@cf12</a>
+              Created with &lt;3 • <a href="https://github.com/cf12/atarashii-tab">@cf12</a>
             </p>
           </div>
         </footer>
