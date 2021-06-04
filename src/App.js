@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from "react"
 import { decode } from "html-entities"
-import { FaReddit } from "react-icons/fa"
-import { PuffLoader } from "react-spinners"
+import { FaReddit, FaCog } from "react-icons/fa"
+import { PuffLoader, RotateLoader } from "react-spinners"
+
+import useLocalStorage from './hooks/useLocalStorage'
 
 import TimeDate from "./components/TimeDate"
+import ConfigModal from "./components/ConfigModal"
 import Icons from "./components/Icons"
+import Image from "./components/Image"
 
 import "./App.scss"
 
 export default () => {
   const [data, setData] = useState(null)
   const [loaded, setLoaded] = useState(false)
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [ config, setConfig ] = useLocalStorage('config', {
+    theme: {
+      primary: '#ffc400'
+    },
+    sort: 'top',
+    t: 'all',
+  })
+
+  useEffect(() => {
+    console.log(config)
+    document.documentElement.style.setProperty('--primary', config.theme.primary)
+  }, [config])
 
   useEffect(() => {
     // TODO: Pagination + display number of results on main page
@@ -19,8 +37,8 @@ export default () => {
     const query = new URLSearchParams({
       q: 'flair:"Desktop"',
       count: "5",
-      sort: "top",
-      t: "all",
+      sort: config.sort,
+      t: config.t,
       show: "all",
       restrict_sr: 1,
     })
@@ -73,14 +91,20 @@ export default () => {
     <div className={loaded ? "load" : ""}>
       <div className="content">
         <header>
-          <TimeDate />
+          <div className="header-left">
+            <TimeDate />
 
-          <div className="details">
-            <p className="to-load to-delay-1">{data?.title}</p>
-            <p className="to-load to-delay-2">{data?.res}</p>
+            <div className="details">
+              <p className="to-load to-delay-1">{data?.title}</p>
+              <p className="to-load to-delay-2">{data?.res}</p>
+            </div>
+
+            {data && <Icons link={data.link} url={data.url} />}
           </div>
 
-          {data && <Icons link={data.link} url={data.url} />}
+          <div className="header-right to-right">
+            <FaCog size={24} onClick={() => setModalOpen(e => !e)} />
+          </div>
         </header>
 
         <footer className="to-bottom">
@@ -111,14 +135,19 @@ export default () => {
         </footer>
       </div>
 
-      <img
+      <ConfigModal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        config={config}
+        setConfig={setConfig}
+      />
+
+      <Image
         className="bg to-load-bg"
         src={data?.url}
         alt=""
         onLoad={() => setLoaded(true)}
       />
-
-      <div className="modal"></div>
     </div>
   )
 }
