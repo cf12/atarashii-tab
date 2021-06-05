@@ -53,7 +53,7 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 export default () => {
-  const { config } = useContext(AppContext)
+  const { config, setLoaded, setConfig } = useContext(AppContext)
 
   return (
     <div className="config">
@@ -69,7 +69,15 @@ export default () => {
         />
       )}
 
-      <FaSync />
+      <div
+        className="reroll"
+        onClick={() => {
+          setLoaded(false)
+        }}
+      >
+        reroll
+        <FaSync size={16} />
+      </div>
     </div>
   )
 }

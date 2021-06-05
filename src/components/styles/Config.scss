@@ -33,12 +33,13 @@
     }
   }
 
-  & > svg {
-    transition: transform 100ms ease;
+  .reroll {
+    margin-top: 12px;
+    transition: color 150ms ease;
 
     &:hover {
       color: white;
-      transform: scale(1.1);
+      cursor: pointer;
     }
   }
 }

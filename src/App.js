@@ -41,15 +41,16 @@ export default () => {
   }, [config])
 
   useEffect(() => {
-    if (!cache) return
+    if (!cache || loaded) return
+
+    console.log('[i] Fetching w/ config:', config)
 
     async function run() {
       let posts = []
 
-      console.log(config)
-
       // Cache for 12 hours
       if (Date.now() - cache.lastUpdated < 1000 * 60 * 60 * 12) {
+        console.log('[i] Using cached posts')
         posts = cache.data
       } else {
         let after = null
@@ -123,7 +124,7 @@ export default () => {
     }
 
     run()
-  }, [cache])
+  }, [cache, loaded])
 
   return (
     <AppContext.Provider
