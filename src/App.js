@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { decode } from "html-entities"
-import { FaReddit, FaCog, FaSadTear } from "react-icons/fa"
+import { FaReddit, FaCog, FaSadTear, FaGithub, FaHeart } from "react-icons/fa"
 import { PuffLoader, RotateLoader } from "react-spinners"
 
 import useLocalStorage from "./hooks/useLocalStorage"
@@ -197,8 +197,7 @@ export default () => {
 
             <div className="credits to-right">
               <p>
-                Created with &lt;3 •{" "}
-                <a href="https://github.com/cf12/atarashii-tab">@cf12</a>
+                Created with <FaHeart /> •{" "}<a href="https://github.com/cf12/atarashii-tab">@cf12</a>
               </p>
             </div>
           </footer>
