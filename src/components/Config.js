@@ -1,15 +1,13 @@
 import React, { useContext } from "react"
+import { FaSync } from "react-icons/fa"
 
-import AppContext from '../contexts/AppContext'
+import AppContext from "../contexts/AppContext"
 
 import "./styles/Config.scss"
 
 const ValuePicker = ({ valueKey, values }) => {
-  const {
-    cache, setCache,
-    config, setConfig,
-    loaded, setLoaded
-  } = useContext(AppContext)
+  const { cache, setCache, config, setConfig, loaded, setLoaded } =
+    useContext(AppContext)
 
   const curValue = config[valueKey]
 
@@ -28,13 +26,19 @@ const ValuePicker = ({ valueKey, values }) => {
               <a
                 key={value}
                 onClick={(e) => {
-                  setConfig({
+                  let newConfig = {
                     ...config,
                     [valueKey]: value,
-                  })
+                  }
+
+                  // Sorting by new on Reddit needs to be all
+                  if (valueKey === "sort" && value === "new")
+                    newConfig.t = "all"
+
+                  setConfig(newConfig)
                   setCache({
                     lastUpdated: -1,
-                    data: []
+                    data: [],
                   })
                   setLoaded(false)
                 }}
@@ -49,20 +53,23 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 export default () => {
-  // TODO: Spinner for !config
-  // if (!config || !open) return null
+  const { config } = useContext(AppContext)
 
   return (
     <div className="config">
       <ValuePicker
-        valueKey="t"
-        values={["hour", "day", "week", "month", "year", "all"]}
-      />
-
-      <ValuePicker
         valueKey="sort"
         values={["relevance", "hot", "top", "new"]}
       />
+
+      {config.sort !== "new" && (
+        <ValuePicker
+          valueKey="t"
+          values={["hour", "day", "week", "month", "year", "all"]}
+        />
+      )}
+
+      <FaSync />
     </div>
   )
 }

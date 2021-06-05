@@ -1,9 +1,14 @@
 .config {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   font-size: .85rem;
 
-  line-height: 175%;
+  margin-top: 8px;
+  gap: 8px;
 
   color: rgba(white, 60%);
 
@@ -25,6 +30,15 @@
 
     & > a.selected {
       color: white;
+    }
+  }
+
+  & > svg {
+    transition: transform 100ms ease;
+
+    &:hover {
+      color: white;
+      transform: scale(1.1);
     }
   }
 }
