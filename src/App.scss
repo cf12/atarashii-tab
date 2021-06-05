@@ -153,12 +153,6 @@ a {
   opacity: 0;
 }
 
-@for $i from 1 to 10 {
-  .to-delay-#{$i} {
-    transition-delay: #{$i * 100 + 100}ms;
-  }
-}
-
 .to-load-bg {
   opacity: 0;
   transform: scale(1.1);
@@ -184,5 +178,11 @@ a {
   .to-load {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@for $i from 1 to 10 {
+  .to-delay-#{$i} {
+    transition-delay: #{$i * 100 + 100}ms;
   }
 }
