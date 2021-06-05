@@ -21,11 +21,12 @@ export default () => {
 
   const [modalOpen, setModalOpen] = useState(false)
   const [config, setConfig] = useLocalStorage("config", {
+    q: `flair:"Desktop"`,
+    sort: "top",
+    t: "all",
     theme: {
       primary: "#ffc400",
     },
-    sort: "top",
-    t: "all",
   })
 
   const [cache, setCache] = useLocalStorage("cache", {
@@ -57,7 +58,7 @@ export default () => {
 
         while (posts.length < 100) {
           const query = new URLSearchParams({
-            q: 'flair:"Desktop"',
+            q: config.q,
             sort: config.sort,
             t: config.t,
             show: "all",
