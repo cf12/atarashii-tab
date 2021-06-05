@@ -7,8 +7,11 @@ import useLocalStorage from './hooks/useLocalStorage'
 
 import TimeDate from "./components/TimeDate"
 import ConfigModal from "./components/ConfigModal"
+import Config from "./components/Config"
 import Icons from "./components/Icons"
 import Image from "./components/Image"
+
+import AppContext from './contexts/AppContext'
 
 import "./App.scss"
 
@@ -41,6 +44,8 @@ export default () => {
     async function run () {
       let posts = []
 
+      console.log(config)
+
       // Cache for 12 hours
       if ((Date.now() - cache.lastUpdated) < (1000 * 60 * 60 * 12)) {
         posts = cache.data
@@ -50,7 +55,6 @@ export default () => {
         while (posts.length < 100) {
           const query = new URLSearchParams({
             q: 'flair:"Desktop"',
-            count: "5",
             sort: config.sort,
             t: config.t,
             show: "all",
@@ -112,70 +116,73 @@ export default () => {
     }
 
     run()
-  }, [])
+  }, [cache])
 
   return (
-    <div className={loaded ? "load" : ""}>
-      <div className="content">
-        <header>
-          <div className="header-left">
-            <TimeDate />
+    <AppContext.Provider
+      value={{
+        data, setData,
+        cache, setCache,
+        config, setConfig,
+        loaded, setLoaded
+      }}
+    >
+      <div className={loaded ? 'load' : ''}>
+        <div className="content">
+          <header>
+            <div className="header-left">
+              <TimeDate />
 
-            <div className="details">
-              <p className="to-load to-delay-1">{data?.title}</p>
-              <p className="to-load to-delay-2">{data?.res}</p>
+              <div className="details">
+                <p className="to-load to-delay-1">{data?.title}</p>
+                <p className="to-load to-delay-2">{data?.res}</p>
+              </div>
+
+              {data && <Icons link={data.link} url={data.url} />}
             </div>
 
-            {data && <Icons link={data.link} url={data.url} />}
-          </div>
+            <div className="header-right to-right">
+              {/* <FaCog size={24} onClick={() => setModalOpen(e => !e)} /> */}
+              <Config />
+            </div>
+          </header>
 
-          <div className="header-right to-right">
-            <FaCog size={24} onClick={() => setModalOpen(e => !e)} />
-          </div>
-        </header>
+          <footer className="to-bottom">
+            <div className="attr">
+              <p className="attr-from to-load to-delay-3">
+                Image from{" "}
+                <a href="https://reddit.com/r/animewallpaper">
+                  <FaReddit size={20} /> r/Animewallpaper
+                </a>
+              </p>
 
-        <footer className="to-bottom">
-          <div className="attr">
-            <p className="attr-from to-load to-delay-3">
-              Image from{" "}
-              <a href="https://reddit.com/r/animewallpaper">
-                <FaReddit size={20} /> r/Animewallpaper
-              </a>
-            </p>
+              <p className="attr-bottom to-load to-delay-4">
+                Post <strong>#{data?.num + 1}</strong> of <strong>{cache.data.length}</strong> •{" "}
+                <a href={data?.link}>{data?.link}</a>
+              </p>
 
-            <p className="attr-bottom to-load to-delay-4">
-              Post <strong>#{data?.num + 1}</strong> of <strong>{cache.data.length}</strong> •{" "}
-              <a href={data?.link}>{data?.link}</a>
-            </p>
+              {!loaded && (
+                <span className="attr-loader">
+                  <PuffLoader color="white" size={24} />
+                </span>
+              )}
+            </div>
 
-            {!loaded && (
-              <span className="attr-loader">
-                <PuffLoader color="white" size={24} />
-              </span>
-            )}
-          </div>
+            <div className="credits to-right">
+              <p>
+                Created with &lt;3 • <a href="https://github.com/cf12/atarashii-tab">@cf12</a>
+              </p>
+            </div>
+          </footer>
+        </div>
 
-          <div className="credits to-right">
-            <p>
-              Created with &lt;3 • <a href="https://github.com/cf12/atarashii-tab">@cf12</a>
-            </p>
-          </div>
-        </footer>
+        <Image
+          className="bg to-load-bg"
+          src={data?.url}
+          alt=""
+          onLoad={() => setLoaded(true)}
+        />
       </div>
-
-      <ConfigModal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        config={config}
-        setConfig={setConfig}
-      />
-
-      <Image
-        className="bg to-load-bg"
-        src={data?.url}
-        alt=""
-        onLoad={() => setLoaded(true)}
-      />
-    </div>
+    </AppContext.Provider>
   )
 }

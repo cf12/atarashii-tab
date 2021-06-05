@@ -1,0 +1,30 @@
+.config {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: .85rem;
+
+  line-height: 150%;
+
+  color: rgba(white, 60%);
+
+  & > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+
+    & > a {
+      color: rgba(white, 60%);
+
+      user-select: none;
+
+      &:hover {
+        color: white;
+        cursor: pointer;
+      }
+    }
+
+    & > a.selected {
+      color: white;
+    }
+  }
+}
