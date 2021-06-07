@@ -17,7 +17,10 @@ module.exports = {
     new HtmlWebpackInlineSVGPlugin(),
     new CopyWebpackPlugin({
       patterns: [
-        { from: "./src/manifest.json" }
+        { from: "./src/manifest.json" },
+        { from: "./src/icons/icon-128.png", to: "icon-128.png" },
+        { from: "./src/icons/icon-48.png", to: "icon-48.png" },
+        { from: "./src/icons/icon-16.png", to: "icon-16.png" }
       ],
     }),
     new MiniCssExtractPlugin()
@@ -26,11 +29,11 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"],
       },
       {
         test: /\.m?js$/,

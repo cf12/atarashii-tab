@@ -1,15 +1,17 @@
 {
-  "name": "Atarashii (New) Tab",
-  "description": "Displays anime wallpapers from the internet on your new tab page.",
-  "version": "0.1.0",
+  "name": "Atarashii (New) Tab Page",
+  "description": "Displays anime wallpapers from r/Animewallpaper on your new tab page.",
+  "version": "0.1.3",
   "manifest_version": 3,
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "permissions": [
-    "identity",
-    "storage"
-  ],
+  "permissions": [],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  },
   "host_permissions": [
     "https://i.redd.it/"
   ]
