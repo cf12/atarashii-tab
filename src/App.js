@@ -95,16 +95,12 @@ export default () => {
       const post = posts[num]
       const link = `https://redd.it/${post.id}`
 
-      let title = decode(post.title)
-      // TODO: Optimize into one match?
-      let parts = []
-        .concat(title.match(/\[.*?\]/g))
-        .concat(title.match(/\(.*?\)/g))
-        .concat(title.match(/\{.*?\}/g))
-        .filter((e) => !!e)
-      const cutoff = Math.min(...parts.map((e) => title.indexOf(e)))
-      parts = parts.map((e) => e.slice(1, -1))
-      title = '"' + title.slice(0, cutoff).trim() + '"'
+      const rawTitle = decode(post.title)
+
+      const parts = rawTitle
+        .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
+        .map((e) => e.slice(1, -1))
+      const title = '"' + rawTitle.replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, '').trim() + '"'
 
       let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
 
