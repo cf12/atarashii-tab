@@ -12,4 +12,11 @@ NProgress.configure({
 
 import App from './App'
 
-render(<App />, document.getElementById("root"))
+// Prevent transitions from preloading
+window.addEventListener('load', () => {
+  document.body.classList.remove('preload')
+
+  // Render after window load to prevent instant img loading
+  render(<App />, document.getElementById("root"))
+})
+
