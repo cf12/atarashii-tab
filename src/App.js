@@ -114,7 +114,8 @@ export default () => {
         resolution = resolution.split(/[x×*]/).join(" × ")
       }
 
-      parts.unshift(title)
+      if (title)
+        parts.unshift(title)
 
       setData({
         title: parts.join(" • "),
