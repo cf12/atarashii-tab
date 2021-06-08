@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react"
 import { decode } from "html-entities"
-import { FaReddit, FaCog, FaSadTear, FaGithub, FaHeart } from "react-icons/fa"
-import { PuffLoader, RotateLoader } from "react-spinners"
+import { FaReddit, FaSadTear, FaHeart } from "react-icons/fa"
+import { PuffLoader } from "react-spinners"
 
 import useLocalStorage from "./hooks/useLocalStorage"
 
 import TimeDate from "./components/TimeDate"
-import ConfigModal from "./components/ConfigModal"
 import Config from "./components/Config"
 import Icons from "./components/Icons"
 import Image from "./components/Image"
@@ -43,18 +42,16 @@ export default () => {
   }, [config])
 
   useEffect(() => {
-    if (!cache || loaded) return
+    if (loaded) return
 
     console.log('[i] Fetching w/ config:', config)
 
     async function run() {
       let posts = []
 
-      // Cache for 24 hours
-      if (Date.now() - cache.lastUpdated < 1000 * 60 * 60 * 24) {
-        console.log('[i] Using cached posts')
-        posts = cache.data
-      } else {
+      // Cache for 24 hours, also never refresh cache if pinned
+      // If (never cached OR (not pinned AND cache expired))
+      if (cache.lastUpdated === -1 || (config.num === null && Date.now() - cache.lastUpdated >= 1000 * 60 * 60 * 24)) {
         let after = null
 
         while (posts.length < 200) {
@@ -84,6 +81,9 @@ export default () => {
         }
 
         setCache({ lastUpdated: Date.now(), data: posts })
+      } else {
+        console.log('[i] Using cached posts')
+        posts = cache.data
       }
 
       if (!posts.length) {
@@ -126,7 +126,7 @@ export default () => {
     }
 
     run()
-  }, [cache, loaded])
+  }, [loaded])
 
   return (
     <AppContext.Provider
