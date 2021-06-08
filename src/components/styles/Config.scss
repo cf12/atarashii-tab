@@ -33,13 +33,23 @@
     }
   }
 
-  .reroll {
-    margin-top: 12px;
-    transition: color 150ms ease;
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
 
-    &:hover {
-      color: white;
-      cursor: pointer;
+    margin-top: 12px;
+
+    .button {
+      display: flex;
+      gap: 6px;
+
+      transition: color 150ms ease;
+
+      &:hover {
+        color: white;
+        cursor: pointer;
+      }
     }
   }
 }

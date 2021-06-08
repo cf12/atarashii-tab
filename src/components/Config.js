@@ -1,5 +1,6 @@
+import { data } from "autoprefixer"
 import React, { useContext } from "react"
-import { FaSync } from "react-icons/fa"
+import { FaSync, FaThumbtack } from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
 
@@ -29,6 +30,7 @@ const ValuePicker = ({ valueKey, values }) => {
                   let newConfig = {
                     ...config,
                     [valueKey]: value,
+                    num: null
                   }
 
                   // Sorting by new on Reddit needs to be all
@@ -53,7 +55,7 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 export default () => {
-  const { config, setLoaded, setConfig } = useContext(AppContext)
+  const { config, setLoaded, setConfig, data } = useContext(AppContext)
 
   return (
     <div className="config">
@@ -69,15 +71,29 @@ export default () => {
         />
       )}
 
-      <div
-        className="reroll"
-        onClick={() => {
-          setLoaded(false)
-        }}
-      >
-        reroll
-        <FaSync size={16} />
-      </div>
+      <span className="buttons">
+        <div
+          className="button"
+          onClick={() => {
+            setConfig({
+              ...config,
+              num: data.num
+            })
+          }}
+        >
+          pin
+          <FaThumbtack size={16} />
+        </div>
+        <div
+          className="button"
+          onClick={() => {
+            setLoaded(false)
+          }}
+        >
+          reroll
+          <FaSync size={16} />
+        </div>
+      </span>
     </div>
   )
 }

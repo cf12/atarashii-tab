@@ -21,6 +21,7 @@ export default () => {
 
   const [modalOpen, setModalOpen] = useState(false)
   const [config, setConfig] = useLocalStorage("config", {
+    num: null,
     q: `flair:"Desktop"`,
     sort: "top",
     t: "all",
@@ -49,14 +50,14 @@ export default () => {
     async function run() {
       let posts = []
 
-      // Cache for 12 hours
-      if (Date.now() - cache.lastUpdated < 1000 * 60 * 60 * 12) {
+      // Cache for 24 hours
+      if (Date.now() - cache.lastUpdated < 1000 * 60 * 60 * 24) {
         console.log('[i] Using cached posts')
         posts = cache.data
       } else {
         let after = null
 
-        while (posts.length < 100) {
+        while (posts.length < 200) {
           const query = new URLSearchParams({
             q: config.q,
             sort: config.sort,
@@ -91,7 +92,7 @@ export default () => {
         return
       }
 
-      const num = Math.floor(Math.random() * posts.length)
+      const num = config.num || Math.floor(Math.random() * posts.length)
       const post = posts[num]
       const link = `https://redd.it/${post.id}`
 
@@ -100,7 +101,9 @@ export default () => {
       const parts = rawTitle
         .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
         .map((e) => e.slice(1, -1))
-      const title = '"' + rawTitle.replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, '').trim() + '"'
+      const title = rawTitle
+        .replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, '')
+        .trim()
 
       let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
 
