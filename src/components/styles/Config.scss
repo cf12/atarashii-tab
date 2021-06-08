@@ -26,10 +26,10 @@
         color: white;
         cursor: pointer;
       }
-    }
 
-    & > a.selected {
-      color: white;
+      &.selected {
+        color: white;
+      }
     }
   }
 
@@ -44,11 +44,23 @@
       display: flex;
       gap: 6px;
 
-      transition: color 150ms ease;
+      background-color: rgba(white, 20%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 16px;
 
-      &:hover {
-        color: white;
+      transition: all 150ms ease;
+
+      &:hover, &.active {
+        background-color: white;
+        color: black;
         cursor: pointer;
+      }
+
+      &[disabled] {
+        pointer-events: none;
+        background-color: rgba(black, 50%);
+        color: rgba(white, 60%);
       }
     }
   }

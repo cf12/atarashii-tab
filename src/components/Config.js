@@ -73,11 +73,11 @@ export default () => {
 
       <span className="buttons">
         <div
-          className="button"
+          className={"button" + (config.num !== null ? " active" : "")}
           onClick={() => {
             setConfig({
               ...config,
-              num: data.num
+              num: config.num !== null ? null : data.num
             })
           }}
         >
@@ -89,6 +89,7 @@ export default () => {
           onClick={() => {
             setLoaded(false)
           }}
+          disabled={config.num !== null}
         >
           reroll
           <FaSync size={16} />

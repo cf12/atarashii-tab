@@ -96,6 +96,8 @@ export default () => {
       const post = posts[num]
       const link = `https://redd.it/${post.id}`
 
+      console.log('[i] Loading post:', post)
+
       const rawTitle = decode(post.title)
 
       const parts = rawTitle
