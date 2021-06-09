@@ -27,17 +27,17 @@ const ValuePicker = ({ valueKey, values }) => {
               <a
                 key={value}
                 onClick={(e) => {
-                  let newConfig = {
+                  setConfig({
                     ...config,
                     [valueKey]: value,
-                    num: null
-                  }
+                    num: null,
 
-                  // Sorting by new on Reddit needs to be all
-                  if (valueKey === "sort" && value === "new")
-                    newConfig.t = "all"
-
-                  setConfig(newConfig)
+                    // Sorting by new on Reddit needs to be all
+                    t:
+                      valueKey === "sort" && value === "new"
+                        ? "all"
+                        : undefined,
+                  })
                   setCache({
                     lastUpdated: -1,
                     data: [],
@@ -55,7 +55,7 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 export default () => {
-  const { config, setLoaded, setConfig, data } = useContext(AppContext)
+  const { config, setLoaded, setCache, setConfig, data } = useContext(AppContext)
 
   return (
     <div className="config">
@@ -77,8 +77,14 @@ export default () => {
           onClick={() => {
             setConfig({
               ...config,
-              nsfw: !config.nsfw
+              num: null,
+              nsfw: !config.nsfw,
             })
+            setCache({
+              lastUpdated: -1,
+              data: [],
+            })
+            setLoaded(false)
           }}
         >
           nsfw
@@ -90,7 +96,7 @@ export default () => {
           onClick={() => {
             setConfig({
               ...config,
-              num: config.num !== null ? null : data.num
+              num: config.num !== null ? null : data.num,
             })
           }}
         >
