@@ -25,7 +25,6 @@ jobs:
       - run: zip -rj atarashii-${{ steps.package-version.outputs.current-version }}.zip build/
       - name: Create Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: atarashii-${{ steps.package-version.outputs.current-version }}.zip
         env:
