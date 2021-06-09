@@ -1,7 +1,7 @@
 {
   "name": "atarashii-tab",
-  "version": "1.0.0",
-  "description": "",
+  "description": "Displays anime wallpapers from r/Animewallpaper on your new tab page.",
+  "version": "0.1.4",
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development webpack --watch",
