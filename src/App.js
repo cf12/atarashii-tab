@@ -24,6 +24,7 @@ export default () => {
     q: `flair:"Desktop"`,
     sort: "top",
     t: "all",
+    nsfw: false,
     theme: {
       primary: "#ffc400",
     },
@@ -61,6 +62,7 @@ export default () => {
             t: config.t,
             show: "all",
             restrict_sr: 1,
+            include_over_18: config.nsfw && 'on',
             after,
           })
 
@@ -102,6 +104,7 @@ export default () => {
 
       const parts = rawTitle
         .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
+        .filter(e => !!e)
         .map((e) => e.slice(1, -1))
       const title = rawTitle
         .replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, '')

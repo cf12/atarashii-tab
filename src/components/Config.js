@@ -1,6 +1,6 @@
 import { data } from "autoprefixer"
 import React, { useContext } from "react"
-import { FaSync, FaThumbtack } from "react-icons/fa"
+import { FaExclamationTriangle, FaSync, FaThumbtack } from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
 
@@ -73,6 +73,19 @@ export default () => {
 
       <span className="buttons">
         <div
+          className={"button" + (config.nsfw ? " active" : "")}
+          onClick={() => {
+            setConfig({
+              ...config,
+              nsfw: !config.nsfw
+            })
+          }}
+        >
+          nsfw
+          <FaExclamationTriangle size={16} />
+        </div>
+
+        <div
           className={"button" + (config.num !== null ? " active" : "")}
           onClick={() => {
             setConfig({
@@ -84,6 +97,7 @@ export default () => {
           pin
           <FaThumbtack size={16} />
         </div>
+
         <div
           className="button"
           onClick={() => {
