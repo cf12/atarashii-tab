@@ -6,8 +6,6 @@
 
 [![Build](https://github.com/cf12/atarashii-tab/actions/workflows/build.yml/badge.svg)](https://github.com/cf12/atarashii-tab/actions/workflows/build.yml)
 
----
-
 ## Features
 - HD wallpaper backgrounds from [r/Animewallpaper](https://reddit.com/r/Animewallpaper)
 - Title, anime, and resolution details pulled from original reddit post
