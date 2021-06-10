@@ -24,8 +24,7 @@ jobs:
       - run: npm run build
       - run: zip -rj atarashii-${{ steps.package-version.outputs.current-version }}.zip build/
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1.8.6
         with:
-          files: atarashii-${{ steps.package-version.outputs.current-version }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: atarashii-${{ steps.package-version.outputs.current-version }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
