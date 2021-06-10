@@ -27,17 +27,17 @@ const ValuePicker = ({ valueKey, values }) => {
               <a
                 key={value}
                 onClick={(e) => {
-                  setConfig({
+                  let newConfig = {
                     ...config,
                     [valueKey]: value,
-                    num: null,
+                    num: null
+                  }
 
-                    // Sorting by new on Reddit needs to be all
-                    t:
-                      valueKey === "sort" && value === "new"
-                        ? "all"
-                        : undefined,
-                  })
+                  // Sorting by new on Reddit needs to be all
+                  if (valueKey === "sort" && value === "new")
+                    newConfig.t = "all"
+
+                  setConfig(newConfig)
                   setCache({
                     lastUpdated: -1,
                     data: [],
