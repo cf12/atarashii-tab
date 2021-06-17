@@ -1,0 +1,3 @@
+- Hide GUI elements
+- Search for phrase
+- History
