@@ -74,13 +74,17 @@ export default () => {
           after = json.data.after
           if (!after) break
 
-          // Collect posts w/ i.redd.it only
-          let tmpPosts = json.data.children
-            .map((e) => e.data)
-            .filter((e) => e.url.includes("i.redd.it"))
-
-          posts = posts.concat(tmpPosts)
+          posts = posts.concat(json.data.children)
         }
+
+        // Collect posts w/ i.redd.it only
+        posts = posts.map((e) => e.data)
+
+        // Filter by NSFW if enabled
+        if (config.nsfw)
+          posts = posts.filter(e => e.thumbnail === 'nsfw')
+
+        posts = posts.filter((e) => e.url.includes("i.redd.it"))
 
         setCache({ lastUpdated: Date.now(), data: posts })
       } else {
