@@ -5,6 +5,7 @@ import {
   FaThumbtack,
   FaCog,
   FaEye,
+  FaEyeSlash,
   FaUserSecret,
 } from "react-icons/fa"
 
@@ -164,12 +165,12 @@ export default () => {
         </div>
 
         <div
-          className={"button" + (!config.hideGui ? " active" : "")}
+          className="button"
           id="btnHideGui"
           onClick={() => toggle("hideGui")}
         >
           {!config.hideGui ? "hide" : "show"} gui
-          <FaEye size={16} />
+          {!config.hideGui ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
         </div>
       </span>
 
