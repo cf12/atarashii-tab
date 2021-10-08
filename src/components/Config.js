@@ -1,5 +1,12 @@
 import React, { useEffect, useContext } from "react"
-import { FaExclamationTriangle, FaSync, FaThumbtack, FaCog, FaEye, FaUserSecret } from "react-icons/fa"
+import {
+  FaExclamationTriangle,
+  FaSync,
+  FaThumbtack,
+  FaCog,
+  FaEye,
+  FaUserSecret,
+} from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
 
@@ -29,7 +36,7 @@ const ValuePicker = ({ valueKey, values }) => {
                   let newConfig = {
                     ...config,
                     [valueKey]: value,
-                    num: null
+                    num: null,
                   }
 
                   // Sorting by new on Reddit needs to be all
@@ -54,32 +61,45 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 export default () => {
-  const { config, setLoaded, setCache, setConfig, data } = useContext(AppContext)
+  const { config, setLoaded, setCache, setConfig, data } =
+    useContext(AppContext)
+
+  const toggle = (key) => {
+    setConfig((config) => {
+      return {
+        ...config,
+        [key]: !config[key],
+      }
+    })
+  }
+
+  const togglePin = () => {
+    setConfig((config) => {
+      return {
+        ...config,
+        num: config.num !== null ? null : data.num,
+      }
+    })
+  }
 
   useEffect(() => {
-    if (!config || !data) return
+    if (!config) return
 
     const action = (e) => {
-      if (e.code === 'KeyR' && config.num === null)
-        setLoaded(false)
-      else if (e.code === 'KeyP')
-        setConfig({
-          ...config,
-          num: config.num !== null ? null : data.num,
-        })
-      else if (e.code === 'KeyG')
-        setConfig({
-          ...config,
-          hideGui: !config.hideGui
-        })
+      if (e.code === "KeyG") toggle("hideGui")
+
+      if (config.hideGui) return
+      else if (e.code === "KeyR" && config.num === null) setLoaded(false)
+      else if (e.code === "KeyP") togglePin()
+      else if (e.code === "KeyI") toggle("incognito")
     }
 
-    document.addEventListener('keydown', action)
+    document.addEventListener("keydown", action)
 
     return () => {
-      document.removeEventListener('keydown', action)
-    } 
-  }, [config, data])
+      document.removeEventListener("keydown", action)
+    }
+  }, [config])
 
   return (
     <div className="config">
@@ -117,12 +137,7 @@ export default () => {
 
         <div
           className={"button" + (config.num !== null ? " active" : "")}
-          onClick={() => {
-            setConfig({
-              ...config,
-              num: config.num !== null ? null : data.num,
-            })
-          }}
+          onClick={() => togglePin()}
         >
           pin
           <FaThumbtack size={16} />
@@ -130,9 +145,7 @@ export default () => {
 
         <div
           className="button"
-          onClick={() => {
-            setLoaded(false)
-          }}
+          onClick={() => setLoaded(false)}
           disabled={config.num !== null}
         >
           reroll
@@ -141,12 +154,7 @@ export default () => {
 
         <div
           className={"button" + (config.incognito ? " active" : "")}
-          onClick={() => {
-            setConfig({
-              ...config,
-              incognito: !config.incognito
-            })
-          }}
+          onClick={() => toggle("incognito")}
         >
           incognito
           <FaUserSecret size={16} />
@@ -155,12 +163,7 @@ export default () => {
         <div
           className={"button" + (!config.hideGui ? " active" : "")}
           id="btnHideGui"
-          onClick={() => {
-            setConfig({
-              ...config,
-              hideGui: !config.hideGui,
-            })
-          }}
+          onClick={() => toggle("hideGui")}
         >
           {!config.hideGui ? "hide" : "show"} gui
           <FaEye size={16} />
