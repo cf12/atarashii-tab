@@ -140,6 +140,19 @@ export default () => {
         </div>
 
         <div
+          className="button"
+          onClick={() => {
+            setConfig({
+              ...config,
+              hideGui: !config.hideGui,
+            })
+          }}
+        >
+          {!config.hideGui && "hide gui"}
+          <FaEye size={16} />
+        </div>
+
+        <div
           className={"button" + (!config.hideGui ? " active" : "")}
           id="btnHideGui"
           onClick={() => {
@@ -149,7 +162,7 @@ export default () => {
             })
           }}
         >
-          {!config.hideGui && "hide gui"}
+          {!config.hideGui ? "hide" : "show"} gui
           <FaEye size={16} />
         </div>
       </span>

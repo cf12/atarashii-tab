@@ -211,10 +211,12 @@ a {
     transition-delay: 0s;
     opacity: 0;
     transform: translateX(16px);
+    pointer-events: none;
   }
 
   .config > .buttons > #btnHideGui {
-    top: 0;
+    // lol
+    transform: translateY(calc(-134px + 100%));
   }
 
   .content {
