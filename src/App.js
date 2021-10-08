@@ -12,7 +12,7 @@ import Image from "./components/Image"
 
 import AppContext from "./contexts/AppContext"
 
-import { version } from "../package.json"
+import pkg from "../package.json"
 
 import "./App.scss"
 
@@ -47,14 +47,18 @@ export default () => {
   useEffect(() => {
     if (loaded) return
 
-    console.log('[i] Fetching w/ config:', config)
+    console.log("[i] Fetching w/ config:", config)
 
     async function run() {
       let posts = []
 
       // Cache for 24 hours, also never refresh cache if pinned
       // If (never cached OR (not pinned AND cache expired))
-      if (cache.lastUpdated === -1 || (config.num === null && Date.now() - cache.lastUpdated >= 1000 * 60 * 60 * 24)) {
+      if (
+        cache.lastUpdated === -1 ||
+        (config.num === null &&
+          Date.now() - cache.lastUpdated >= 1000 * 60 * 60 * 24)
+      ) {
         let after = null
 
         while (posts.length < 200) {
@@ -64,7 +68,7 @@ export default () => {
             t: config.t,
             show: "all",
             restrict_sr: 1,
-            include_over_18: config.nsfw && 'on',
+            include_over_18: config.nsfw && "on",
             after,
           })
 
@@ -83,14 +87,13 @@ export default () => {
         posts = posts.map((e) => e.data)
 
         // Filter by NSFW if enabled
-        if (config.nsfw)
-          posts = posts.filter(e => e.thumbnail === 'nsfw')
+        if (config.nsfw) posts = posts.filter((e) => e.thumbnail === "nsfw")
 
         posts = posts.filter((e) => e.url.includes("i.redd.it"))
 
         setCache({ lastUpdated: Date.now(), data: posts })
       } else {
-        console.log('[i] Using cached posts')
+        console.log("[i] Using cached posts")
         posts = cache.data
       }
 
@@ -104,17 +107,15 @@ export default () => {
       const post = posts[num]
       const link = `https://redd.it/${post.id}`
 
-      console.log('[i] Loading post:', post)
+      console.log("[i] Loading post:", post)
 
       const rawTitle = decode(post.title)
 
       const parts = rawTitle
         .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
-        .filter(e => !!e)
+        .filter((e) => !!e)
         .map((e) => e.slice(1, -1))
-      const title = rawTitle
-        .replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, '')
-        .trim()
+      const title = rawTitle.replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, "").trim()
 
       let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
 
@@ -123,8 +124,7 @@ export default () => {
         resolution = resolution.split(/[x×*]/).join(" × ")
       }
 
-      if (title)
-        parts.unshift(title)
+      if (title) parts.unshift(title)
 
       setData({
         title: parts.join(" • "),
@@ -151,13 +151,17 @@ export default () => {
         setLoaded,
       }}
     >
-      <div className={loaded ? "load" : ""}>
+      <div
+        className={
+          (loaded ? "load" : "") + " " + (config.hideGui ? "hidden" : "")
+        }
+      >
         <div className="content">
           <header>
             <div className="header-left">
               <TimeDate />
 
-              <div className="details">
+              <div className="details hideable">
                 <p className="to-load to-delay-1">{data?.title}</p>
                 <p className="to-load to-delay-2">{data?.res}</p>
               </div>
@@ -166,12 +170,11 @@ export default () => {
             </div>
 
             <div className="header-right to-right">
-              {/* <FaCog size={24} onClick={() => setModalOpen(e => !e)} /> */}
               <Config />
             </div>
           </header>
 
-          <footer className="to-bottom">
+          <footer className="to-bottom hideable">
             <div className="attr">
               <p className="attr-from to-load to-delay-3">
                 {data === null ? (
@@ -209,7 +212,10 @@ export default () => {
 
             <div className="credits to-right">
               <p>
-                Created with <FaHeart /> •{" "} <a href="https://github.com/cf12/atarashii-tab">v{version}</a>
+                Created with <FaHeart /> •{" "}
+                <a href="https://github.com/cf12/atarashii-tab">
+                  v{pkg.version}
+                </a>
               </p>
             </div>
           </footer>

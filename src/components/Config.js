@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react"
-import { FaExclamationTriangle, FaSync, FaThumbtack } from "react-icons/fa"
+import { FaExclamationTriangle, FaSync, FaThumbtack, FaCog, FaEye } from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
 
@@ -12,7 +12,7 @@ const ValuePicker = ({ valueKey, values }) => {
   const curValue = config[valueKey]
 
   return (
-    <div>
+    <div className="hideable">
       {values
         .map((value) => {
           if (value === curValue)
@@ -133,7 +133,26 @@ export default () => {
           reroll
           <FaSync size={16} />
         </div>
+
+        <div
+          className={"button" + (!config.hideGui ? " active" : "")}
+          id="btnHideGui"
+          onClick={() => {
+            setConfig({
+              ...config,
+              hideGui: !config.hideGui,
+            })
+          }}
+        >
+          {!config.hideGui && "hide gui"}
+          <FaEye size={16} />
+        </div>
       </span>
+
+      {/* <span>
+        <FaCog size={24} onClick={() => setModalOpen(e => !e)} />
+        <p>More Settings</p>
+      </span> */}
     </div>
   )
 }

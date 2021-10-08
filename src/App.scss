@@ -34,6 +34,7 @@ a {
   }
 }
 
+
 .content {
   position: absolute;
   width: 100%;
@@ -46,6 +47,8 @@ a {
 
   box-sizing: border-box;
   padding: 3rem;
+
+  transition: background-color 150ms ease;
 
   p {
     font-family: "Poppins", sans-serif;
@@ -161,6 +164,7 @@ a {
   opacity: 0;
 }
 
+// Controls loading / loadable elements
 .to-load-bg {
   opacity: 0;
   transform: scale(1.1);
@@ -192,5 +196,28 @@ a {
 @for $i from 1 to 10 {
   .to-delay-#{$i} {
     transition-delay: #{$i * 100 + 100}ms;
+  }
+}
+
+// Controls hidden / hideable elements
+.hideable {
+  transition-property: opacity, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+.hidden {
+  .hideable, .button:not(#btnHideGui) {
+    transition-delay: 0s;
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  .config > .buttons > #btnHideGui {
+    top: 0;
+  }
+
+  .content {
+    background-color: rgba(black, 25%);
   }
 }

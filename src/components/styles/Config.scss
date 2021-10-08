@@ -1,4 +1,6 @@
 .config {
+  position: relative;
+
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -36,8 +38,11 @@
   .buttons {
     display: flex;
     flex-direction: row;
-    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 
+    gap: 12px;
+    max-width: 300px;
     margin-top: 12px;
 
     .button {
@@ -62,6 +67,12 @@
         background-color: rgba(black, 50%);
         color: rgba(white, 60%);
       }
+    }
+
+    // TODO: Make less scuffed
+    #btnHideGui {
+      position: absolute;
+      top: calc(100% + 12px);
     }
   }
 }
