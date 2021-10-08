@@ -89,9 +89,10 @@ export default () => {
       if (e.code === "KeyG") toggle("hideGui")
 
       if (config.hideGui) return
+      else if (e.code === "KeyI") toggle("incognito")
+      else if (config.incognito) return
       else if (e.code === "KeyR" && config.num === null) setLoaded(false)
       else if (e.code === "KeyP") togglePin()
-      else if (e.code === "KeyI") toggle("incognito")
     }
 
     document.addEventListener("keydown", action)
@@ -130,6 +131,7 @@ export default () => {
             })
             setLoaded(false)
           }}
+          disabled={config.incognito}
         >
           nsfw
           <FaExclamationTriangle size={16} />
@@ -138,6 +140,7 @@ export default () => {
         <div
           className={"button" + (config.num !== null ? " active" : "")}
           onClick={() => togglePin()}
+          disabled={config.incognito}
         >
           pin
           <FaThumbtack size={16} />
@@ -146,7 +149,7 @@ export default () => {
         <div
           className="button"
           onClick={() => setLoaded(false)}
-          disabled={config.num !== null}
+          disabled={config.incognito || config.num !== null}
         >
           reroll
           <FaSync size={16} />
