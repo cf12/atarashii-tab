@@ -1,5 +1,4 @@
 - Search for phrase
 - History
 - Save wallpapers
-- "Incognito mode" that turns off background
 - Use chrome extension preference syncing

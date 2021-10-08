@@ -25,7 +25,7 @@ export default () => {
     num: null,
     q: `flair:"Desktop"`,
     sort: "top",
-    t: "all",
+    t: "year",
     nsfw: false,
     theme: {
       primary: "#ffc400",
