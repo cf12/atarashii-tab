@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react"
-import { FaExclamationTriangle, FaSync, FaThumbtack, FaCog, FaEye } from "react-icons/fa"
+import { FaExclamationTriangle, FaSync, FaThumbtack, FaCog, FaEye, FaUserSecret } from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
 
@@ -140,16 +140,16 @@ export default () => {
         </div>
 
         <div
-          className="button"
+          className={"button" + (config.incognito ? " active" : "")}
           onClick={() => {
             setConfig({
               ...config,
-              hideGui: !config.hideGui,
+              incognito: !config.incognito
             })
           }}
         >
-          {!config.hideGui && "hide gui"}
-          <FaEye size={16} />
+          incognito
+          <FaUserSecret size={16} />
         </div>
 
         <div

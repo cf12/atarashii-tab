@@ -45,7 +45,7 @@ export default () => {
   }, [config])
 
   useEffect(() => {
-    if (loaded) return
+    if (loaded || config.incognito) return
 
     console.log("[i] Fetching w/ config:", config)
 
@@ -136,7 +136,7 @@ export default () => {
     }
 
     run()
-  }, [loaded])
+  }, [config.incognito, loaded])
 
   return (
     <AppContext.Provider
@@ -153,7 +153,7 @@ export default () => {
     >
       <div
         className={
-          (loaded ? "load" : "") + " " + (config.hideGui ? "hidden" : "")
+          ((!config.incognito && loaded) ? "load" : "") + " " + (config.hideGui ? "hidden" : "")
         }
       >
         <div className="content">
@@ -203,7 +203,7 @@ export default () => {
                 )}
               </p>
 
-              {!loaded && (
+              {!loaded && !config.incognito && (
                 <span className="attr-loader">
                   <PuffLoader color="white" size={24} />
                 </span>
