@@ -12,6 +12,8 @@ import Image from "./components/Image"
 
 import AppContext from "./contexts/AppContext"
 
+import { version } from "../package.json"
+
 import "./App.scss"
 
 export default () => {
@@ -207,7 +209,7 @@ export default () => {
 
             <div className="credits to-right">
               <p>
-                Created with <FaHeart /> •{" "}<a href="https://github.com/cf12/atarashii-tab">@cf12</a>
+                Created with <FaHeart /> •{" "} <a href="https://github.com/cf12/atarashii-tab">v{version}</a>
               </p>
             </div>
           </footer>

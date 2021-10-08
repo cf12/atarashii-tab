@@ -1,5 +1,4 @@
-import { data } from "autoprefixer"
-import React, { useContext } from "react"
+import React, { useEffect, useContext } from "react"
 import { FaExclamationTriangle, FaSync, FaThumbtack } from "react-icons/fa"
 
 import AppContext from "../contexts/AppContext"
@@ -56,6 +55,26 @@ const ValuePicker = ({ valueKey, values }) => {
 
 export default () => {
   const { config, setLoaded, setCache, setConfig, data } = useContext(AppContext)
+
+  useEffect(() => {
+    if (!config || !data) return
+
+    const action = (e) => {
+      if (e.code === 'KeyR' && config.num === null)
+        setLoaded(false)
+      else if (e.code === 'KeyP')
+        setConfig({
+          ...config,
+          num: config.num !== null ? null : data.num,
+        })
+    }
+
+    document.addEventListener('keydown', action)
+
+    return () => {
+      document.removeEventListener('keydown', action)
+    } 
+  }, [config, data])
 
   return (
     <div className="config">

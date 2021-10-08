@@ -4,4 +4,3 @@
 - Save wallpapers
 - "Incognito mode" that turns off background
 - Use chrome extension preference syncing
-- Keyboard shortcuts for rerolling etc.
