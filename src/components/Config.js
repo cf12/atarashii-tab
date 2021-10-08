@@ -67,6 +67,11 @@ export default () => {
           ...config,
           num: config.num !== null ? null : data.num,
         })
+      else if (e.code === 'KeyG')
+        setConfig({
+          ...config,
+          hideGui: !config.hideGui
+        })
     }
 
     document.addEventListener('keydown', action)
