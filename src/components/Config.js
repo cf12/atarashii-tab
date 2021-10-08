@@ -84,7 +84,7 @@ export default () => {
   }
 
   useEffect(() => {
-    if (!config) return
+    if (!config || !toggle || !togglePin) return
 
     const action = (e) => {
       if (e.code === "KeyG") toggle("hideGui")
@@ -101,7 +101,7 @@ export default () => {
     return () => {
       document.removeEventListener("keydown", action)
     }
-  }, [config])
+  }, [config, toggle, togglePin])
 
   return (
     <div className="config">
