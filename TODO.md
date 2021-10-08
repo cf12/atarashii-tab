@@ -1,4 +1,3 @@
-- Hide GUI elements
 - Search for phrase
 - History
 - Save wallpapers
