@@ -20,4 +20,4 @@
 - Promotional image background: [「GG~ありがと〜！」](https://www.pixiv.net/en/artworks/84017469) by [HOJI](https://www.pixiv.net/en/users/19133926) on [pixiv](https://www.pixiv.net/)
 
 
-[![available in chrome web store](https://developer-chrome-com.imgix.net/image/BrQidfK9jaQyIHwdw91aVpkPiib2/RQMv2HZ0v6NKfFn7XCeU.png?w=228)](https://chrome.google.com/webstore/detail/atarashii-new-tab-page/dlhcacedlaiagoocbbgkeclgklanpmim)
+[![available in chrome web store](https://wd.imgix.net/image/BrQidfK9jaQyIHwdw91aVpkPiib2/LclHxMxqoswLNRcUW3m5.png)](https://chrome.google.com/webstore/detail/atarashii-new-tab-page/dlhcacedlaiagoocbbgkeclgklanpmim)
