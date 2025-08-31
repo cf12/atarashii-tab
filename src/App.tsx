@@ -16,7 +16,7 @@ import pkg from "../package.json"
 
 import "./App.scss"
 
-export default () => {
+function App() {
   const [data, setData] = useState(undefined)
   const [loaded, setLoaded] = useState(false)
 
@@ -153,7 +153,9 @@ export default () => {
     >
       <div
         className={
-          ((!config.incognito && loaded) ? "load" : "") + " " + (config.hideGui ? "hidden" : "")
+          (!config.incognito && loaded ? "load" : "") +
+          " " +
+          (config.hideGui ? "hidden" : "")
         }
       >
         <div className="content">
@@ -233,3 +235,5 @@ export default () => {
     </AppContext.Provider>
   )
 }
+
+export default App
