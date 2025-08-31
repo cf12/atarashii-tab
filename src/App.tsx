@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react"
 import { decode } from "html-entities"
-import { FaReddit, FaSadTear, FaHeart } from "react-icons/fa"
+import { FaReddit, FaSadTear, FaHeart, FaArrowDown } from "react-icons/fa"
 import { PuffLoader } from "react-spinners"
 
-import useLocalStorage from "./hooks/useLocalStorage"
+import { useLocalStorage } from "@uidotdev/usehooks"
 
 import TimeDate from "./components/TimeDate"
 import Config from "./components/Config"
 import Icons from "./components/Icons"
 import Image from "./components/Image"
+import HistoryBar from "./components/HistoryBar"
 
 import AppContext from "./contexts/AppContext"
 
@@ -32,6 +33,7 @@ function App() {
     },
   })
 
+  const [history, setHistory] = useLocalStorage("history", [])
   const [cache, setCache] = useLocalStorage("cache", {
     lastUpdated: -1,
     data: [],
@@ -126,13 +128,16 @@ function App() {
 
       if (title) parts.unshift(title)
 
-      setData({
+      const data = {
         title: parts.join(" • "),
         res: resolution || "",
         url: post.url,
         link,
         num,
-      })
+      }
+
+      setData(data)
+      setHistory((history) => [data, ...history])
     }
 
     run()
@@ -149,6 +154,8 @@ function App() {
         setConfig,
         loaded,
         setLoaded,
+        history,
+        setHistory,
       }}
     >
       <div
@@ -171,7 +178,7 @@ function App() {
               {data && <Icons link={data.link} url={data.url} />}
             </div>
 
-            <div className="header-right to-right">
+            <div className="header-right">
               <Config />
             </div>
           </header>
@@ -212,7 +219,11 @@ function App() {
               )}
             </div>
 
-            <div className="credits to-right">
+            <div className="history-chevron">
+              <FaArrowDown />
+            </div>
+
+            <div className="credits">
               <p>
                 Created with <FaHeart /> •{" "}
                 <a href="https://github.com/cf12/atarashii-tab">
@@ -231,6 +242,8 @@ function App() {
             onLoad={() => setLoaded(true)}
           />
         )}
+
+        <HistoryBar />
       </div>
     </AppContext.Provider>
   )

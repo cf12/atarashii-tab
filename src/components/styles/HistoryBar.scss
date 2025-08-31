@@ -1,0 +1,14 @@
+.history {
+  background-color: #000000aa;
+  display: flex;
+  bottom: 0;
+
+  height: 200px;
+
+  & > .card {
+    & > img {
+      width: 600px;
+      height: 400px;
+    }
+  }
+}

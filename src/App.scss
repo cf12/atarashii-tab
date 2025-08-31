@@ -63,6 +63,7 @@ a {
 
   & > header {
     display: flex;
+    justify-content: space-between;
 
     .details {
       display: inline-flex;
@@ -93,6 +94,7 @@ a {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    justify-content: space-between;
 
     .attr {
       position: relative;
