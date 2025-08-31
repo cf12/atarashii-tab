@@ -87,9 +87,9 @@ function Config() {
     if (!config || !toggle || !togglePin) return
 
     const action = (e) => {
-      if (e.code === "KeyG") toggle("hideGui")
-
-      if (config.hideGui) return
+      if (e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return
+      else if (e.code === "KeyH") toggle("hideGui")
+      else if (config.hideGui) return
       else if (e.code === "KeyI") toggle("incognito")
       else if (config.incognito) return
       else if (e.code === "KeyR" && config.num === null) setLoaded(false)
