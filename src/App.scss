@@ -34,7 +34,6 @@ a {
   }
 }
 
-
 .content {
   position: absolute;
   width: 100%;
@@ -126,7 +125,7 @@ a {
 
       .attr-loader {
         position: absolute;
-        bottom: 32px;
+        bottom: 0;
         left: 0;
       }
     }
@@ -207,7 +206,8 @@ a {
 }
 
 .hidden {
-  .hideable, .button:not(#btnHideGui) {
+  .hideable,
+  .button:not(#btnHideGui) {
     transition-delay: 0s;
     opacity: 0;
     transform: translateX(16px);
