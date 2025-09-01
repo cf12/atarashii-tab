@@ -3,9 +3,9 @@
   flex-direction: column;
   align-items: flex-end;
 
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 500;
-  font-size: .85rem;
+  font-size: 0.85rem;
 
   margin-top: 8px;
   gap: 8px;
@@ -43,9 +43,12 @@
     max-width: 300px;
     margin-top: 12px;
 
-    .button {
+    button {
       display: flex;
       gap: 6px;
+
+      border: none;
+      background: none;
 
       background-color: rgba(white, 20%);
       backdrop-filter: blur(2px);
@@ -55,7 +58,8 @@
 
       transition: all 150ms ease;
 
-      &:hover, &.active {
+      &:hover,
+      &.active {
         background-color: white;
         color: black;
         cursor: pointer;

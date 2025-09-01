@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { decode } from "html-entities"
 import { FaReddit, FaSadTear, FaHeart, FaArrowDown } from "react-icons/fa"
 import { PuffLoader } from "react-spinners"
+import { persist } from "valtio-persist"
 
 import { useLocalStorage } from "@uidotdev/usehooks"
 
@@ -16,22 +17,16 @@ import AppContext from "./contexts/AppContext"
 import pkg from "../package.json"
 
 import "./App.scss"
+import { ConfigStore } from "./stores/ConfigStore"
+import { useSnapshot } from "valtio"
 
 function App() {
   const [data, setData] = useState(undefined)
   const [loaded, setLoaded] = useState(false)
 
   const [modalOpen, setModalOpen] = useState(false)
-  const [config, setConfig] = useLocalStorage("config", {
-    num: null,
-    q: `flair:"Desktop"`,
-    sort: "top",
-    t: "year",
-    nsfw: false,
-    theme: {
-      primary: "#ffc400",
-    },
-  })
+
+  const config = useSnapshot(ConfigStore)
 
   const [history, setHistory] = useLocalStorage("history", [])
   const [cache, setCache] = useLocalStorage("cache", {
@@ -44,7 +39,7 @@ function App() {
       "--primary",
       config.theme.primary
     )
-  }, [config])
+  }, [])
 
   useEffect(() => {
     if (loaded || config.incognito) return
@@ -155,8 +150,6 @@ function App() {
         setData,
         cache,
         setCache,
-        config,
-        setConfig,
         loaded,
         setLoaded,
         history,

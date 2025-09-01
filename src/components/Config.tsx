@@ -12,81 +12,66 @@ import {
 import AppContext from "../contexts/AppContext"
 
 import "./styles/Config.scss"
+import {
+  ConfigStore,
+  toggle,
+  toggleNsfw,
+  togglePin,
+  pickValue,
+  type ConfigStatePickableFields,
+  CONFIG_STATE_PICKABLE_FIELDS_MAP,
+} from "../stores/ConfigStore"
+import { useSnapshot } from "valtio"
 
-const ValuePicker = ({ valueKey, values }) => {
-  const { cache, setCache, config, setConfig, loaded, setLoaded } =
-    useContext(AppContext)
+const ValuePicker = ({
+  valueKey,
+}: {
+  valueKey: keyof ConfigStatePickableFields
+}) => {
+  const { cache, setCache, loaded, setLoaded } = useContext(AppContext)
 
+  const config = useSnapshot(ConfigStore)
+  const values = CONFIG_STATE_PICKABLE_FIELDS_MAP[valueKey]
   const curValue = config[valueKey]
 
   return (
     <div className="hideable">
       {values
-        .map((value) => {
-          if (value === curValue)
-            return (
-              <a key={value} className="selected">
-                {value}
-              </a>
-            )
-          else
-            return (
-              <a
-                key={value}
-                onClick={(e) => {
-                  let newConfig = {
-                    ...config,
-                    [valueKey]: value,
-                    num: null,
-                  }
-
-                  // Sorting by new on Reddit needs to be all
-                  if (valueKey === "sort" && value === "new")
-                    newConfig.t = "all"
-
-                  setConfig(newConfig)
-                  setCache({
-                    lastUpdated: -1,
-                    data: [],
-                  })
-                  setLoaded(false)
-                }}
-              >
-                {value}
-              </a>
-            )
-        })
+        .map((value) =>
+          value === curValue ? (
+            <a key={value} className="selected">
+              {value}
+            </a>
+          ) : (
+            <a
+              key={value}
+              onClick={() => {
+                pickValue(valueKey, value)
+                setCache({
+                  lastUpdated: -1,
+                  data: [],
+                })
+                setLoaded(false)
+              }}
+            >
+              {value}
+            </a>
+          )
+        )
         .reduce((prev, cur) => [prev, "•", cur])}
     </div>
   )
 }
 
 function Config() {
-  const { config, setLoaded, setCache, setConfig, data } =
-    useContext(AppContext)
+  const { setLoaded, setCache, data } = useContext(AppContext)
 
-  const toggle = (key) => {
-    setConfig((config) => {
-      return {
-        ...config,
-        [key]: !config[key],
-      }
-    })
-  }
-
-  const togglePin = () => {
-    setConfig((config) => {
-      return {
-        ...config,
-        num: config.num !== null ? null : data.num,
-      }
-    })
-  }
+  const config = useSnapshot(ConfigStore)
 
   useEffect(() => {
-    if (!config || !toggle || !togglePin) return
+    if (!config) return
 
-    const action = (e) => {
+    const action = (e: KeyboardEvent) => {
       if (e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return
       else if (e.code === "KeyH") toggle("hideGui")
       else if (config.hideGui) return
@@ -101,31 +86,19 @@ function Config() {
     return () => {
       document.removeEventListener("keydown", action)
     }
-  }, [config, toggle, togglePin])
+  }, [config, setLoaded])
 
   return (
     <div className="config">
-      <ValuePicker
-        valueKey="sort"
-        values={["relevance", "hot", "top", "new"]}
-      />
-
-      {config.sort !== "new" && (
-        <ValuePicker
-          valueKey="t"
-          values={["hour", "day", "week", "month", "year", "all"]}
-        />
-      )}
+      <ValuePicker valueKey="sort" />
+      {config.sort !== "new" && <ValuePicker valueKey="t" />}
 
       <span className="buttons">
-        <div
-          className={"button" + (config.nsfw ? " active" : "")}
+        <button
+          className={config.nsfw ? " active" : ""}
           onClick={() => {
-            setConfig({
-              ...config,
-              num: null,
-              nsfw: !config.nsfw,
-            })
+            toggleNsfw()
+
             setCache({
               lastUpdated: -1,
               data: [],
@@ -136,42 +109,37 @@ function Config() {
         >
           nsfw
           <FaExclamationTriangle size={16} />
-        </div>
+        </button>
 
-        <div
-          className={"button" + (config.num !== null ? " active" : "")}
+        <button
+          className={config.num !== null ? " active" : ""}
           onClick={() => togglePin()}
           disabled={config.incognito}
         >
           pin
           <FaThumbtack size={16} />
-        </div>
+        </button>
 
-        <div
-          className="button"
+        <button
           onClick={() => setLoaded(false)}
           disabled={config.incognito || config.num !== null}
         >
           reroll
           <FaSync size={16} />
-        </div>
+        </button>
 
-        <div
-          className={"button" + (config.incognito ? " active" : "")}
+        <button
+          className={config.incognito ? " active" : ""}
           onClick={() => toggle("incognito")}
         >
           incognito
           <FaUserSecret size={16} />
-        </div>
+        </button>
 
-        <div
-          className="button"
-          id="btnHideGui"
-          onClick={() => toggle("hideGui")}
-        >
+        <button id="btnHideGui" onClick={() => toggle("hideGui")}>
           {!config.hideGui ? "hide" : "show"} gui
           {!config.hideGui ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
-        </div>
+        </button>
       </span>
 
       {/* <span>
