@@ -16,22 +16,15 @@ import AppContext from "./contexts/AppContext"
 import pkg from "../package.json"
 
 import "./App.scss"
+import { useApplicationStore } from "./stores/useApplicationStore"
+import { useConfigStore } from "./stores/useConfigStore"
 
 function App() {
   const [data, setData] = useState(undefined)
   const [loaded, setLoaded] = useState(false)
 
-  const [modalOpen, setModalOpen] = useState(false)
-  const [config, setConfig] = useLocalStorage("config", {
-    num: null,
-    q: `flair:"Desktop"`,
-    sort: "top",
-    t: "year",
-    nsfw: false,
-    theme: {
-      primary: "#ffc400",
-    },
-  })
+  // const [modalOpen, setModalOpen] = useState(false)
+  const config = useConfigStore()
 
   const [history, setHistory] = useLocalStorage("history", [])
   const [cache, setCache] = useLocalStorage("cache", {
@@ -44,7 +37,7 @@ function App() {
       "--primary",
       config.theme.primary
     )
-  }, [config])
+  }, [config.theme.primary])
 
   useEffect(() => {
     if (loaded || config.incognito) return
@@ -155,8 +148,6 @@ function App() {
         setData,
         cache,
         setCache,
-        config,
-        setConfig,
         loaded,
         setLoaded,
         history,

@@ -1,5 +1,7 @@
-import React from 'react'
+import React from "react"
 
-const AppContext = React.createContext()
+type AppContextType = {}
+
+const AppContext = React.createContext<AppContextType>({})
 
 export default AppContext

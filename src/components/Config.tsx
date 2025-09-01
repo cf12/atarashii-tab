@@ -3,19 +3,29 @@ import {
   FaExclamationTriangle,
   FaSync,
   FaThumbtack,
-  FaCog,
   FaEye,
   FaEyeSlash,
   FaUserSecret,
 } from "react-icons/fa"
 
+import { useShallow } from "zustand/react/shallow"
+
 import AppContext from "../contexts/AppContext"
 
 import "./styles/Config.scss"
+import { useConfigStore  } from "../stores/useConfigStore"
+import type { ConfigStore } from "../stores/useConfigStore"
 
 const ValuePicker = ({ valueKey, values }) => {
-  const { cache, setCache, config, setConfig, loaded, setLoaded } =
-    useContext(AppContext)
+  const { cache, setCache, loaded, setLoaded } = useContext(AppContext)
+
+  const config = useConfigStore(useShallow(
+    (state) => {
+      
+    }
+  ))
+
+  const set = useConfigStore(state => state.set)
 
   const curValue = config[valueKey]
 
@@ -34,17 +44,11 @@ const ValuePicker = ({ valueKey, values }) => {
               <a
                 key={value}
                 onClick={(e) => {
-                  let newConfig = {
-                    ...config,
-                    [valueKey]: value,
-                    num: null,
-                  }
-
-                  // Sorting by new on Reddit needs to be all
                   if (valueKey === "sort" && value === "new")
-                    newConfig.t = "all"
+                    set("t", "all")
 
-                  setConfig(newConfig)
+                  set(valueKey, value)
+                  set("num", null)
                   setCache({
                     lastUpdated: -1,
                     data: [],
@@ -62,38 +66,30 @@ const ValuePicker = ({ valueKey, values }) => {
 }
 
 function Config() {
-  const { config, setLoaded, setCache, setConfig, data } =
-    useContext(AppContext)
+  const { setLoaded, setCache, setConfig, data } = useContext(AppContext)
 
-  const toggle = (key) => {
-    setConfig((config) => {
-      return {
-        ...config,
-        [key]: !config[key],
-      }
-    })
-  }
+  const config = useConfigStore(
+    useShallow((state) => ({
+      hideGui: state.hideGui,
+      incognito: state.incognito,
+      num: state.num,
+      sort: state.sort,
+    }))
+  )
 
-  const togglePin = () => {
-    setConfig((config) => {
-      return {
-        ...config,
-        num: config.num !== null ? null : data.num,
-      }
-    })
-  }
+  const toggle = useConfigStore((state) => state.toggle)
 
   useEffect(() => {
-    if (!config || !toggle || !togglePin) return
+    if (!config || !setLoaded || !toggle) return
 
-    const action = (e) => {
-      if (e.code === "KeyG") toggle("hideGui")
-
-      if (config.hideGui) return
+    const action = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) return
+      else if (e.code === "KeyH") toggle("hideGui")
+      else if (config.hideGui) return
       else if (e.code === "KeyI") toggle("incognito")
       else if (config.incognito) return
       else if (e.code === "KeyR" && config.num === null) setLoaded(false)
-      else if (e.code === "KeyP") togglePin()
+      else if (e.code === "KeyP") toggle("pinned")
     }
 
     document.addEventListener("keydown", action)
@@ -101,12 +97,12 @@ function Config() {
     return () => {
       document.removeEventListener("keydown", action)
     }
-  }, [config, toggle, togglePin])
+  }, [config, setLoaded, toggle])
 
   return (
     <div className="config">
       <ValuePicker
-        valueKey="sort"
+        valueKey=
         values={["relevance", "hot", "top", "new"]}
       />
 
@@ -121,11 +117,9 @@ function Config() {
         <div
           className={"button" + (config.nsfw ? " active" : "")}
           onClick={() => {
-            setConfig({
-              ...config,
-              num: null,
-              nsfw: !config.nsfw,
-            })
+            set("num", null)
+            toggle("nsfw")
+
             setCache({
               lastUpdated: -1,
               data: [],
@@ -140,7 +134,7 @@ function Config() {
 
         <div
           className={"button" + (config.num !== null ? " active" : "")}
-          onClick={() => togglePin()}
+          onClick={() => toggle("pinned")}
           disabled={config.incognito}
         >
           pin
