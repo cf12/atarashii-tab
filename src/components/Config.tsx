@@ -61,7 +61,7 @@ const ValuePicker = ({ valueKey, values }) => {
   )
 }
 
-export default () => {
+function Config() {
   const { config, setLoaded, setCache, setConfig, data } =
     useContext(AppContext)
 
@@ -181,3 +181,5 @@ export default () => {
     </div>
   )
 }
+
+export default Config

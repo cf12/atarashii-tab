@@ -52,6 +52,11 @@ function App() {
     console.log("[i] Fetching w/ config:", config)
 
     async function run() {
+      if (config.num !== null) {
+        console.log("[i] Skipping fetch, loading pinned post")
+        return
+      }
+
       let posts = []
 
       // Cache for 24 hours, also never refresh cache if pinned
@@ -232,6 +237,8 @@ function App() {
               </p>
             </div>
           </footer>
+
+          <HistoryBar />
         </div>
 
         {data === null ? null : (
@@ -242,8 +249,6 @@ function App() {
             onLoad={() => setLoaded(true)}
           />
         )}
-
-        <HistoryBar />
       </div>
     </AppContext.Provider>
   )
