@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react"
+import React, { useEffect, useContext, useMemo } from "react"
 import {
   FaExclamationTriangle,
   FaSync,
@@ -16,19 +16,19 @@ import {
   ConfigStore,
   toggle,
   toggleNsfw,
-  togglePin,
   pickValue,
   type ConfigStatePickableFields,
   CONFIG_STATE_PICKABLE_FIELDS_MAP,
 } from "../stores/ConfigStore"
 import { useSnapshot } from "valtio"
+import { clearCache } from "../stores/CacheStore"
 
 const ValuePicker = ({
   valueKey,
 }: {
   valueKey: keyof ConfigStatePickableFields
 }) => {
-  const { cache, setCache, loaded, setLoaded } = useContext(AppContext)
+  const { loaded, setLoaded } = useContext(AppContext)
 
   const config = useSnapshot(ConfigStore)
   const values = CONFIG_STATE_PICKABLE_FIELDS_MAP[valueKey]
@@ -47,10 +47,7 @@ const ValuePicker = ({
               key={value}
               onClick={() => {
                 pickValue(valueKey, value)
-                setCache({
-                  lastUpdated: -1,
-                  data: [],
-                })
+                clearCache()
                 setLoaded(false)
               }}
             >
@@ -64,29 +61,71 @@ const ValuePicker = ({
 }
 
 function Config() {
-  const { setLoaded, setCache, data } = useContext(AppContext)
+  const { setLoaded, data } = useContext(AppContext)
 
   const config = useSnapshot(ConfigStore)
 
+  const buttons = useMemo(
+    () => [
+      {
+        id: "nsfw",
+        icon: FaExclamationTriangle,
+        action: () => {
+          toggleNsfw()
+          clearCache()
+          setLoaded(false)
+        },
+        isActive: config.nsfw,
+        isDisabled: config.incognito,
+        // keyBinding: "KeyN",
+      },
+      {
+        id: "pin",
+        icon: FaThumbtack,
+        action: () => toggle("pinned"),
+        isActive: config.pinned,
+        isDisabled: config.incognito,
+        keyBinding: "KeyP",
+      },
+      {
+        id: "reroll",
+        icon: FaSync,
+        action: () => setLoaded(false),
+        isDisabled: config.incognito || config.pinned,
+        keyBinding: "KeyR",
+      },
+      {
+        id: "incognito",
+        icon: FaUserSecret,
+        action: () => toggle("incognito"),
+        isActive: config.incognito,
+        keyBinding: "KeyI",
+      },
+      {
+        id: "hideGui",
+        label: () => `${!config.hideGui ? "hide" : "show"} gui`,
+        icon: config.hideGui ? FaEye : FaEyeSlash,
+        action: () => toggle("hideGui"),
+        keyBinding: "KeyH",
+      },
+    ],
+    [config, setLoaded]
+  )
+
+  // Simplified keyboard event handler
   useEffect(() => {
     if (!config) return
 
     const action = (e: KeyboardEvent) => {
       if (e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return
-      else if (e.code === "KeyH") toggle("hideGui")
-      else if (config.hideGui) return
-      else if (e.code === "KeyI") toggle("incognito")
-      else if (config.incognito) return
-      else if (e.code === "KeyR" && config.num === null) setLoaded(false)
-      else if (e.code === "KeyP") togglePin()
+
+      const button = buttons.find((btn) => btn.keyBinding === e.code)
+      if (button && !button.isDisabled) button.action()
     }
 
     document.addEventListener("keydown", action)
-
-    return () => {
-      document.removeEventListener("keydown", action)
-    }
-  }, [config, setLoaded])
+    return () => document.removeEventListener("keydown", action)
+  }, [config, buttons])
 
   return (
     <div className="config">
@@ -94,58 +133,20 @@ function Config() {
       {config.sort !== "new" && <ValuePicker valueKey="t" />}
 
       <span className="buttons">
-        <button
-          className={config.nsfw ? " active" : ""}
-          onClick={() => {
-            toggleNsfw()
-
-            setCache({
-              lastUpdated: -1,
-              data: [],
-            })
-            setLoaded(false)
-          }}
-          disabled={config.incognito}
-        >
-          nsfw
-          <FaExclamationTriangle size={16} />
-        </button>
-
-        <button
-          className={config.num !== null ? " active" : ""}
-          onClick={() => togglePin()}
-          disabled={config.incognito}
-        >
-          pin
-          <FaThumbtack size={16} />
-        </button>
-
-        <button
-          onClick={() => setLoaded(false)}
-          disabled={config.incognito || config.num !== null}
-        >
-          reroll
-          <FaSync size={16} />
-        </button>
-
-        <button
-          className={config.incognito ? " active" : ""}
-          onClick={() => toggle("incognito")}
-        >
-          incognito
-          <FaUserSecret size={16} />
-        </button>
-
-        <button id="btnHideGui" onClick={() => toggle("hideGui")}>
-          {!config.hideGui ? "hide" : "show"} gui
-          {!config.hideGui ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
-        </button>
+        {buttons.map((button) => (
+          <button
+            key={button.id}
+            className={
+              `button-${button.id}` + (button.isActive ? " active" : "")
+            }
+            onClick={button.action}
+            disabled={button.isDisabled}
+          >
+            {button.label ? button.label() : button.id}
+            <button.icon size={16} />
+          </button>
+        ))}
       </span>
-
-      {/* <span>
-        <FaCog size={24} onClick={() => setModalOpen(e => !e)} />
-        <p>More Settings</p>
-      </span> */}
     </div>
   )
 }

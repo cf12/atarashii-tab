@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { decode } from "html-entities"
 import { FaReddit, FaSadTear, FaHeart, FaArrowDown } from "react-icons/fa"
 import { PuffLoader } from "react-spinners"
-import { persist } from "valtio-persist"
-
-import { useLocalStorage } from "@uidotdev/usehooks"
 
 import TimeDate from "./components/TimeDate"
 import Config from "./components/Config"
@@ -19,27 +16,27 @@ import pkg from "../package.json"
 import "./App.scss"
 import { ConfigStore } from "./stores/ConfigStore"
 import { useSnapshot } from "valtio"
+import { CacheStore } from "./stores/CacheStore"
+import { HistoryStore } from "./stores/HistoryStore"
+import type { PostData } from "./types/PostData"
 
 function App() {
-  const [data, setData] = useState(undefined)
   const [loaded, setLoaded] = useState(false)
 
-  const [modalOpen, setModalOpen] = useState(false)
+  // const [modalOpen, setModalOpen] = useState(false)
 
   const config = useSnapshot(ConfigStore)
+  const cache = useSnapshot(CacheStore)
+  const { history, i } = useSnapshot(HistoryStore)
 
-  const [history, setHistory] = useLocalStorage("history", [])
-  const [cache, setCache] = useLocalStorage("cache", {
-    lastUpdated: -1,
-    data: [],
-  })
+  const data = history[i] || null
 
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--primary",
       config.theme.primary
     )
-  }, [])
+  }, [config.theme.primary])
 
   useEffect(() => {
     if (loaded || config.incognito) return
@@ -47,12 +44,7 @@ function App() {
     console.log("[i] Fetching w/ config:", config)
 
     async function run() {
-      if (config.num !== null) {
-        console.log("[i] Skipping fetch, loading pinned post")
-        return
-      }
-
-      let posts = []
+      let posts: any[] = []
 
       // Cache for 24 hours, also never refresh cache if pinned
       // If (never cached OR (not pinned AND cache expired))
@@ -65,12 +57,12 @@ function App() {
 
         while (posts.length < 200) {
           const query = new URLSearchParams({
-            q: config.q,
-            sort: config.sort,
-            t: config.t,
+            q: config.q.toString(),
+            sort: config.sort.toString(),
+            t: config.t.toString(),
             show: "all",
-            restrict_sr: 1,
-            include_over_18: config.nsfw && "on",
+            restrict_sr: "1",
+            include_over_18: config.nsfw ? "on" : "off",
             after,
           })
 
@@ -93,14 +85,14 @@ function App() {
 
         posts = posts.filter((e) => e.url.includes("i.redd.it"))
 
-        setCache({ lastUpdated: Date.now(), data: posts })
+        CacheStore.lastUpdated = Date.now()
+        CacheStore.data = posts
       } else {
         console.log("[i] Using cached posts")
         posts = cache.data
       }
 
       if (!posts.length) {
-        setData(null)
         setLoaded(true)
         return
       }
@@ -136,8 +128,7 @@ function App() {
         num,
       }
 
-      setData(data)
-      setHistory((history) => [data, ...history])
+      HistoryStore.history.unshift(data)
     }
 
     run()
@@ -146,14 +137,8 @@ function App() {
   return (
     <AppContext.Provider
       value={{
-        data,
-        setData,
-        cache,
-        setCache,
         loaded,
         setLoaded,
-        history,
-        setHistory,
       }}
     >
       <div

@@ -209,14 +209,14 @@ a {
 
 .hidden {
   .hideable,
-  .button:not(#btnHideGui) {
+  button:not(.button-hideGui) {
     transition-delay: 0s;
     opacity: 0;
     transform: translateX(16px);
     pointer-events: none;
   }
 
-  .config > .buttons > #btnHideGui {
+  .config > .buttons > .button-hideGui {
     // lol
     transform: translateY(calc(-134px + 100%));
   }

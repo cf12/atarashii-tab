@@ -1,4 +1,4 @@
-import { persist, LocalStorageStrategy } from "valtio-persist"
+import { persist } from "valtio-persist"
 
 export const CONFIG_STATE_PICKABLE_FIELDS_MAP = {
   sort: ["relevance", "hot", "top", "new"],
@@ -6,7 +6,7 @@ export const CONFIG_STATE_PICKABLE_FIELDS_MAP = {
 }
 
 export type ConfigState = {
-  num?: number | null
+  num?: number
   q: string
   sort: (typeof CONFIG_STATE_PICKABLE_FIELDS_MAP.sort)[number]
   t: (typeof CONFIG_STATE_PICKABLE_FIELDS_MAP.t)[number]
@@ -57,21 +57,20 @@ export const { store: ConfigStore } = await persist<ConfigState>(
       primary: "#ffc400",
     },
   },
-  "config",
-  { storageStrategy: LocalStorageStrategy }
+  "config"
 )
 
 export const toggle = (key: keyof ConfigStateToggleableFields) => {
   ConfigStore[key] = !ConfigStore[key]
 }
 
-export const togglePin = () => {
-  ConfigStore.num = ConfigStore.num !== null ? null : ConfigStore.num
-  ConfigStore.pinned = !ConfigStore.pinned
-}
+// export const togglePin = () => {
+//   ConfigStore.num = ConfigStore.num ? undefined : ConfigStore.num
+//   ConfigStore.pinned = !ConfigStore.pinned
+// }
 
 export const toggleNsfw = () => {
-  ConfigStore.num = null
+  ConfigStore.num = undefined
   ConfigStore.nsfw = !ConfigStore.nsfw
 }
 
@@ -82,5 +81,5 @@ export const pickValue = <K extends keyof ConfigStatePickableFields>(
   // Sorting by new on Reddit needs to be all
   if (key === "sort" && value === "new") ConfigStore.t = "all"
   ConfigStore[key] = value
-  ConfigStore.num = null
+  ConfigStore.num = undefined
 }

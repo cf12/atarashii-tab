@@ -3,10 +3,14 @@ import { useContext } from "react"
 import "./styles/HistoryBar.scss"
 import AppContext from "../contexts/AppContext"
 import { FaThumbtack } from "react-icons/fa"
+import { ConfigStore } from "../stores/ConfigStore"
+import { useSnapshot } from "valtio"
+import { HistoryStore } from "../stores/HistoryStore"
 
 const History = () => {
-  const { history, setHistory, setData, setConfig, setLoaded } =
-    useContext(AppContext)
+  const { setData, setLoaded } = useContext(AppContext)
+
+  const { history } = useSnapshot(HistoryStore)
 
   return (
     <div className="history">
@@ -18,9 +22,7 @@ const History = () => {
             onClick={() => {
               setLoaded(false)
               setData(data)
-              setConfig((config) => {
-                return { ...config, num: data.num }
-              })
+              ConfigStore.num = data.id
             }}
           >
             {/* {JSON.stringify(data)} */}
