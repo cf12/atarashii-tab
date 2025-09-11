@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     tags:
-    - '*'
+      - "*"
 
 jobs:
   build:
@@ -11,18 +11,23 @@ jobs:
     env:
       NODE_ENV: production
     steps:
-      - uses: actions/checkout@v2
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@master
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '14.x'
-      - run: npm i
-      - run: npm run build
-      - run: zip -rj atarashii-${{ steps.package-version.outputs.current-version }}.zip build/
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Zip release artifact
+        run: zip -rj atarashii-${{ steps.package-version.outputs.current-version }}.zip dist/
+
       - name: Create Release
-        uses: ncipollo/release-action@v1.8.6
+        uses: ncipollo/release-action@v1
         with:
           artifacts: atarashii-${{ steps.package-version.outputs.current-version }}.zip
           token: ${{ secrets.GITHUB_TOKEN }}
