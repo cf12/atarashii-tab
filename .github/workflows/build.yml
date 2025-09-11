@@ -28,4 +28,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: atarashii-${{ steps.package-version.outputs.current-version }}.zip
-          token: ${{ secrets.GITHUB_TOKEN }}
+          immutableCreate: true
