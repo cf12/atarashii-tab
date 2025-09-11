@@ -3,5 +3,5 @@ export type ImageData = {
   res: string
   url: string
   link: string
-  num: number
+  nums: readonly [i: number, total: number]
 }

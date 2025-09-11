@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/nprogress": "^0.2.3",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@uidotdev/usehooks": "^2.4.1",

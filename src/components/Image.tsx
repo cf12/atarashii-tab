@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react"
-import NProgress from "nprogress/nprogress.js"
+import NProgress from "nprogress"
 
-export default ({ src, ...props }) => {
-  const [loadedSrc, setLoadedSrc] = useState(null)
+type ImageProps = React.ImgHTMLAttributes<HTMLImageElement>
+
+function Image({ src, ...props }: ImageProps) {
+  const [loadedSrc, setLoadedSrc] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    if (!src)
-      return
+    if (!src) return
 
     const xmlHTTP = new XMLHttpRequest()
     xmlHTTP.open("GET", src, true)
@@ -26,3 +27,5 @@ export default ({ src, ...props }) => {
 
   return <img src={loadedSrc} {...props} />
 }
+
+export default Image

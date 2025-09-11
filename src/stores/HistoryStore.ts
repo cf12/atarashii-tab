@@ -11,5 +11,5 @@ export const { store: HistoryStore } = await persist<HistoryStore>(
     history: [],
     i: -1,
   },
-  "history"
+  "history",
 )

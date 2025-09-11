@@ -42,34 +42,5 @@
     gap: 12px;
     max-width: 300px;
     margin-top: 12px;
-
-    button {
-      display: flex;
-      gap: 6px;
-
-      border: none;
-      background: none;
-
-      background-color: rgba(white, 20%);
-      backdrop-filter: blur(2px);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 16px;
-
-      transition: all 150ms ease;
-
-      &:hover,
-      &.active {
-        background-color: white;
-        color: black;
-        cursor: pointer;
-      }
-
-      &[disabled] {
-        pointer-events: none;
-        background-color: rgba(black, 50%);
-        color: rgba(white, 60%);
-      }
-    }
   }
 }

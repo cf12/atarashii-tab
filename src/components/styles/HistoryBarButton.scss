@@ -1,0 +1,18 @@
+.history-bar-button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+
+  opacity: 0;
+
+  transform: translateX(-50%) !important;
+  transition: all 200ms ease;
+
+  &.visible {
+    opacity: 1 !important;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+}

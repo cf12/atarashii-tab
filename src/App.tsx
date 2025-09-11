@@ -1,35 +1,39 @@
-import { useState, useEffect } from "react"
 import { decode } from "html-entities"
-import { FaReddit, FaSadTear, FaHeart, FaArrowDown } from "react-icons/fa"
+import { useEffect, useState } from "react"
+import {
+  FaArrowDown,
+  FaArrowUp,
+  FaHeart,
+  FaReddit,
+  FaSadTear,
+} from "react-icons/fa"
 import { PuffLoader } from "react-spinners"
 
-import TimeDate from "./components/TimeDate"
 import Config from "./components/Config"
+import HistoryBar from "./components/HistoryBar"
 import Icons from "./components/Icons"
 import Image from "./components/Image"
-import HistoryBar from "./components/HistoryBar"
-
-import AppContext from "./contexts/AppContext"
+import TimeDate from "./components/TimeDate"
 
 import pkg from "../package.json"
 
-import "./App.scss"
-import { ConfigStore } from "./stores/ConfigStore"
 import { useSnapshot } from "valtio"
+import "./App.scss"
+import { AppStore, LoadState, setLoaded } from "./stores/AppStore"
 import { CacheStore } from "./stores/CacheStore"
+import { ConfigStore, toggleHistoryBar } from "./stores/ConfigStore"
 import { HistoryStore } from "./stores/HistoryStore"
-import type { PostData } from "./types/PostData"
+import type { ImageData } from "./types/ImageData"
+import { fetchPosts } from "./utils/fetchPosts"
+import HistoryBarButton from "./components/HistoryBarButton"
 
 function App() {
-  const [loaded, setLoaded] = useState(false)
-
-  // const [modalOpen, setModalOpen] = useState(false)
-
+  const { loaded } = useSnapshot(AppStore)
   const config = useSnapshot(ConfigStore)
   const cache = useSnapshot(CacheStore)
   const { history, i } = useSnapshot(HistoryStore)
 
-  const data = history[i] || null
+  // const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -39,65 +43,42 @@ function App() {
   }, [config.theme.primary])
 
   useEffect(() => {
-    if (loaded || config.incognito) return
+    if (config.pinned && loaded === LoadState.FETCH_NEW) {
+      setLoaded(LoadState.LOADING)
+    }
+  }, [config.pinned, loaded])
 
-    console.log("[i] Fetching w/ config:", config)
+  useEffect(() => {
+    // No-op if incognito or pinned
+    if (config.incognito || config.pinned || loaded !== LoadState.FETCH_NEW)
+      return
+
+    let ignore = false
 
     async function run() {
       let posts: any[] = []
 
-      // Cache for 24 hours, also never refresh cache if pinned
-      // If (never cached OR (not pinned AND cache expired))
+      // Cache for 24 hours
       if (
         cache.lastUpdated === -1 ||
-        (config.num === null &&
-          Date.now() - cache.lastUpdated >= 1000 * 60 * 60 * 24)
+        Date.now() - cache.lastUpdated >= 1000 * 60 * 60 * 24
       ) {
-        let after = null
+        console.log("[i] Fetching w/ config:", config)
+        posts = await fetchPosts(config)
 
-        while (posts.length < 200) {
-          const query = new URLSearchParams({
-            q: config.q.toString(),
-            sort: config.sort.toString(),
-            t: config.t.toString(),
-            show: "all",
-            restrict_sr: "1",
-            include_over_18: config.nsfw ? "on" : "off",
-            after,
-          })
-
-          const res = await fetch(
-            `https://www.reddit.com/r/Animewallpaper/search.json?${query}`
-          )
-          const json = await res.json()
-
-          after = json.data.after
-          if (!after) break
-
-          posts = posts.concat(json.data.children)
+        if (!ignore) {
+          CacheStore.lastUpdated = Date.now()
+          CacheStore.data = posts
         }
-
-        // Collect posts w/ i.redd.it only
-        posts = posts.map((e) => e.data)
-
-        // Filter by NSFW if enabled
-        if (config.nsfw) posts = posts.filter((e) => e.thumbnail === "nsfw")
-
-        posts = posts.filter((e) => e.url.includes("i.redd.it"))
-
-        CacheStore.lastUpdated = Date.now()
-        CacheStore.data = posts
       } else {
         console.log("[i] Using cached posts")
-        posts = cache.data
+        posts = cache.data as any[]
       }
 
-      if (!posts.length) {
-        setLoaded(true)
-        return
-      }
+      if (!posts.length || ignore) return
 
-      const num = config.num || Math.floor(Math.random() * posts.length)
+      // Decode post data into ImageData
+      const num = Math.floor(Math.random() * posts.length)
       const post = posts[num]
       const link = `https://redd.it/${post.id}`
 
@@ -105,10 +86,11 @@ function App() {
 
       const rawTitle = decode(post.title)
 
-      const parts = rawTitle
-        .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
-        .filter((e) => !!e)
-        .map((e) => e.slice(1, -1))
+      const parts =
+        rawTitle
+          .match(/\[.*?\]|\(.*?\)|\{.*?\}/g)
+          ?.filter((e) => !!e)
+          .map((e) => e.slice(1, -1)) || []
       const title = rawTitle.replace(/\[.*?\]|\(.*?\)|\{.*?\}/g, "").trim()
 
       let resolution = parts.filter((e) => e.match(/[\d\s]+[x×*][\d\s]+/g))?.[0]
@@ -120,115 +102,117 @@ function App() {
 
       if (title) parts.unshift(title)
 
-      const data = {
+      const data: ImageData = {
         title: parts.join(" • "),
         res: resolution || "",
         url: post.url,
         link,
-        num,
+        nums: [num, posts.length],
       }
 
-      HistoryStore.history.unshift(data)
+      HistoryStore.history.push(data)
+      setLoaded(LoadState.LOADING)
     }
 
     run()
-  }, [config.incognito, loaded])
+
+    return () => {
+      ignore = true
+    }
+  }, [cache.data, cache.lastUpdated, config, loaded])
+
+  // Select post from history if pinned, else we pull from last history entry
+  const data =
+    history && loaded !== LoadState.FETCH_NEW
+      ? config.pinned
+        ? history[i]
+        : history[history.length - 1]
+      : undefined
 
   return (
-    <AppContext.Provider
-      value={{
-        loaded,
-        setLoaded,
-      }}
+    <div
+      className={
+        (!config.incognito && loaded === LoadState.LOADED ? "load" : "") +
+        " " +
+        (config.hideGui ? "hidden" : "")
+      }
     >
-      <div
-        className={
-          (!config.incognito && loaded ? "load" : "") +
-          " " +
-          (config.hideGui ? "hidden" : "")
-        }
-      >
-        <div className="content">
-          <header>
-            <div className="header-left">
-              <TimeDate />
+      <div className="content">
+        <header>
+          <div className="header-left">
+            <TimeDate />
 
-              <div className="details hideable">
-                <p className="to-load to-delay-1">{data?.title}</p>
-                <p className="to-load to-delay-2">{data?.res}</p>
-              </div>
-
-              {data && <Icons link={data.link} url={data.url} />}
+            <div className="details hideable">
+              <p className="to-load to-delay-1">{data?.title}</p>
+              <p className="to-load to-delay-2">{data?.res}</p>
             </div>
 
-            <div className="header-right">
-              <Config />
-            </div>
-          </header>
+            {data && <Icons link={data?.link} url={data?.url} />}
+          </div>
 
-          <footer className="to-bottom hideable">
-            <div className="attr">
-              <p className="attr-from to-load to-delay-3">
-                {data === null ? (
-                  <strong>
-                    No images found <FaSadTear size={20} />
-                  </strong>
-                ) : (
-                  <>
-                    Image from{" "}
-                    <a href="https://reddit.com/r/animewallpaper">
-                      <FaReddit size={20} /> r/Animewallpaper
-                    </a>
-                  </>
-                )}
-              </p>
+          <div className="header-right">
+            <Config />
+          </div>
+        </header>
 
-              <p className="attr-bottom to-load to-delay-4">
-                {data === null ? (
-                  <>Try different filters! • Reddit down perhaps?</>
-                ) : (
-                  <>
-                    Post <strong>#{data?.num + 1}</strong> of{" "}
-                    <strong>{cache.data.length}</strong> •{" "}
-                    <a href={data?.link}>{data?.link}</a>
-                  </>
-                )}
-              </p>
-
-              {!loaded && !config.incognito && (
-                <span className="attr-loader">
-                  <PuffLoader color="white" size={24} />
-                </span>
+        <footer className="to-bottom hideable">
+          <div className="attr">
+            <p className="attr-from to-load to-delay-3">
+              {data === null ? (
+                <strong>
+                  No images found <FaSadTear size={20} />
+                </strong>
+              ) : (
+                <>
+                  Image from{" "}
+                  <a href="https://reddit.com/r/animewallpaper">
+                    <FaReddit size={20} /> r/Animewallpaper
+                  </a>
+                </>
               )}
-            </div>
+            </p>
 
-            <div className="history-chevron">
-              <FaArrowDown />
-            </div>
+            <p className="attr-bottom to-load to-delay-4">
+              {data === null ? (
+                <>Try different filters! • Reddit down perhaps?</>
+              ) : (
+                <>
+                  Post <strong>#{(data?.nums[0] || 0) + 1}</strong> of{" "}
+                  <strong>{data?.nums[1]}</strong> •{" "}
+                  <a href={data?.link}>{data?.link}</a>
+                </>
+              )}
+            </p>
 
-            <div className="credits">
-              <p>
-                Created with <FaHeart /> •{" "}
-                <a href="https://github.com/cf12/atarashii-tab">
-                  v{pkg.version}
-                </a>
-              </p>
-            </div>
-          </footer>
+            {loaded !== LoadState.LOADED && !config.incognito && (
+              <span className="attr-loader">
+                <PuffLoader color="white" size={18} />
+              </span>
+            )}
+          </div>
 
-          <HistoryBar />
-        </div>
+          <div className="credits">
+            <p>
+              Created with <FaHeart /> •{" "}
+              <a href="https://github.com/cf12/atarashii-tab">v{pkg.version}</a>
+            </p>
+          </div>
 
-        {data === null ? null : (
-          <Image
-            className="bg to-load-bg"
-            src={data?.url}
-            alt=""
-            onLoad={() => setLoaded(true)}
-          />
-        )}
+          <HistoryBarButton />
+        </footer>
+
+        <HistoryBar />
       </div>
-    </AppContext.Provider>
+
+      {data === null ? null : (
+        <Image
+          className="bg to-load-bg"
+          src={data?.url}
+          alt=""
+          onLoad={() => setLoaded(LoadState.LOADED)}
+        />
+      )}
+    </div>
   )
 }
 

@@ -1,38 +1,42 @@
-import { useContext } from "react"
-
 import "./styles/HistoryBar.scss"
-import AppContext from "../contexts/AppContext"
 import { FaThumbtack } from "react-icons/fa"
 import { ConfigStore } from "../stores/ConfigStore"
 import { useSnapshot } from "valtio"
 import { HistoryStore } from "../stores/HistoryStore"
+import { LoadState, setLoaded } from "../stores/AppStore"
 
 const History = () => {
-  const { setData, setLoaded } = useContext(AppContext)
-
-  const { history } = useSnapshot(HistoryStore)
+  const { history, i: historyIndex } = useSnapshot(HistoryStore)
+  const { pinned, isHistoryBarVisible } = useSnapshot(ConfigStore)
 
   return (
-    <div className="history">
+    <div className={`history ${isHistoryBarVisible ? "visible" : ""}`}>
       <div className="cards-container">
-        {history.map((data, i) => (
-          <div
-            key={`history-card-${i}`}
-            className="card"
-            onClick={() => {
-              setLoaded(false)
-              setData(data)
-              ConfigStore.num = data.id
-            }}
-          >
-            {/* {JSON.stringify(data)} */}
-            <div className="card-cover">
-              <FaThumbtack />
-            </div>
+        {history.map((data, i) => {
+          const isPinned = pinned && historyIndex === i
 
-            <img src={data.url} />
-          </div>
-        ))}
+          return (
+            <div
+              key={`history-card-${i}`}
+              className={`card ${isPinned ? "pinned" : ""}`}
+              onClick={
+                !isPinned
+                  ? () => {
+                      ConfigStore.pinned = true
+                      setLoaded(LoadState.FETCH_NEW)
+                      HistoryStore.i = i
+                    }
+                  : undefined
+              }
+            >
+              <div className="card-cover">
+                <FaThumbtack />
+              </div>
+
+              <img src={data.url} />
+            </div>
+          )
+        })}
       </div>
     </div>
   )

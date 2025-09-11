@@ -1,35 +1,33 @@
-import React, { useEffect, useContext, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import {
   FaExclamationTriangle,
-  FaSync,
-  FaThumbtack,
-  FaCog,
   FaEye,
   FaEyeSlash,
+  FaSync,
+  FaThumbtack,
   FaUserSecret,
 } from "react-icons/fa"
 
-import AppContext from "../contexts/AppContext"
-
-import "./styles/Config.scss"
-import {
-  ConfigStore,
-  toggle,
-  toggleNsfw,
-  pickValue,
-  type ConfigStatePickableFields,
-  CONFIG_STATE_PICKABLE_FIELDS_MAP,
-} from "../stores/ConfigStore"
 import { useSnapshot } from "valtio"
 import { clearCache } from "../stores/CacheStore"
+import {
+  CONFIG_STATE_PICKABLE_FIELDS_MAP,
+  ConfigStore,
+  pickValue,
+  toggle,
+  toggleNsfw,
+  type ConfigStatePickableFields,
+} from "../stores/ConfigStore"
+import "./styles/Config.scss"
+
+import { LoadState, setLoaded } from "../stores/AppStore"
+import { HistoryStore } from "../stores/HistoryStore"
 
 const ValuePicker = ({
   valueKey,
 }: {
   valueKey: keyof ConfigStatePickableFields
 }) => {
-  const { loaded, setLoaded } = useContext(AppContext)
-
   const config = useSnapshot(ConfigStore)
   const values = CONFIG_STATE_PICKABLE_FIELDS_MAP[valueKey]
   const curValue = config[valueKey]
@@ -48,7 +46,7 @@ const ValuePicker = ({
               onClick={() => {
                 pickValue(valueKey, value)
                 clearCache()
-                setLoaded(false)
+                setLoaded(LoadState.FETCH_NEW)
               }}
             >
               {value}
@@ -61,9 +59,8 @@ const ValuePicker = ({
 }
 
 function Config() {
-  const { setLoaded, data } = useContext(AppContext)
-
   const config = useSnapshot(ConfigStore)
+  const { history } = useSnapshot(HistoryStore)
 
   const buttons = useMemo(
     () => [
@@ -71,9 +68,10 @@ function Config() {
         id: "nsfw",
         icon: FaExclamationTriangle,
         action: () => {
+          if (config.pinned) ConfigStore.pinned = false
           toggleNsfw()
           clearCache()
-          setLoaded(false)
+          setLoaded(LoadState.FETCH_NEW)
         },
         isActive: config.nsfw,
         isDisabled: config.incognito,
@@ -82,7 +80,11 @@ function Config() {
       {
         id: "pin",
         icon: FaThumbtack,
-        action: () => toggle("pinned"),
+        action: () => {
+          HistoryStore.i = history.length - 1
+          toggle("pinned")
+          if (config.pinned) setLoaded(LoadState.FETCH_NEW)
+        },
         isActive: config.pinned,
         isDisabled: config.incognito,
         keyBinding: "KeyP",
@@ -90,7 +92,7 @@ function Config() {
       {
         id: "reroll",
         icon: FaSync,
-        action: () => setLoaded(false),
+        action: () => setLoaded(LoadState.FETCH_NEW),
         isDisabled: config.incognito || config.pinned,
         keyBinding: "KeyR",
       },
@@ -109,7 +111,13 @@ function Config() {
         keyBinding: "KeyH",
       },
     ],
-    [config, setLoaded]
+    [
+      config.hideGui,
+      config.incognito,
+      config.nsfw,
+      config.pinned,
+      history.length,
+    ]
   )
 
   // Simplified keyboard event handler

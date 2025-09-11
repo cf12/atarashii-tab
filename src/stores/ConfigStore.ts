@@ -16,6 +16,8 @@ export type ConfigState = {
   hideGui: boolean
   pinned: boolean
 
+  isHistoryBarVisible: boolean
+
   theme: {
     primary: string
   }
@@ -45,6 +47,8 @@ export const { store: ConfigStore } = await persist<ConfigState>(
     hideGui: false,
     pinned: false,
 
+    isHistoryBarVisible: false,
+
     //   toggleNsfw: () => set({ nsfw: !get().nsfw }),
     //   toggleIncognito: () => set({ incognito: !get().incognito }),
     //   toggleHideGui: () => set({ hideGui: !get().hideGui }),
@@ -70,7 +74,6 @@ export const toggle = (key: keyof ConfigStateToggleableFields) => {
 // }
 
 export const toggleNsfw = () => {
-  ConfigStore.num = undefined
   ConfigStore.nsfw = !ConfigStore.nsfw
 }
 
@@ -81,5 +84,8 @@ export const pickValue = <K extends keyof ConfigStatePickableFields>(
   // Sorting by new on Reddit needs to be all
   if (key === "sort" && value === "new") ConfigStore.t = "all"
   ConfigStore[key] = value
-  ConfigStore.num = undefined
+}
+
+export const toggleHistoryBar = () => {
+  ConfigStore.isHistoryBarVisible = !ConfigStore.isHistoryBarVisible
 }
