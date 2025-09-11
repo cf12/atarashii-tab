@@ -22,7 +22,7 @@ jobs:
         run: npm run build
 
       - name: Zip release artifact
-        run: zip -rj atarashii-new-tab.zip dist/
+        run: cd dist && zip -r ../atarashii-new-tab.zip
 
       - name: Create Release
         uses: ncipollo/release-action@v1
