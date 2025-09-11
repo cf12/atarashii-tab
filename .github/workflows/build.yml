@@ -15,6 +15,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
 
+      - name: Get package version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
