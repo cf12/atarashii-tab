@@ -1,4 +1,2 @@
 - Search for phrase
-- History
 - Save wallpapers
-- Use chrome extension preference syncing
