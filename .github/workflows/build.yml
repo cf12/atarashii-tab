@@ -15,9 +15,6 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
 
-      - name: Get package version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
-
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
@@ -25,10 +22,10 @@ jobs:
         run: npm run build
 
       - name: Zip release artifact
-        run: zip -rj atarashii-${{ steps.package-version.outputs.current-version }}.zip dist/
+        run: zip -rj atarashii-new-tab.zip dist/
 
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: atarashii-${{ steps.package-version.outputs.current-version }}.zip
+          artifacts: atarashii-new-tab.zip
           immutableCreate: true
