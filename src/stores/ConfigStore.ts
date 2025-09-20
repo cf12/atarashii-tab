@@ -5,6 +5,13 @@ export const CONFIG_STATE_PICKABLE_FIELDS_MAP = {
   t: ["hour", "day", "week", "month", "year", "all"],
 }
 
+export const CONFIG_STATE_TOGGLEABLE_FIELDS = [
+  "nsfw",
+  "incognito",
+  "hideGui",
+  "pinned",
+] as const
+
 export type ConfigState = {
   num?: number
   q: string
@@ -24,15 +31,11 @@ export type ConfigState = {
 }
 
 export type ConfigStatePickableFields = {
-  sort: ConfigState["sort"]
-  t: ConfigState["t"]
+  [K in keyof typeof CONFIG_STATE_PICKABLE_FIELDS_MAP]: ConfigState[K]
 }
 
 export type ConfigStateToggleableFields = {
-  nsfw: ConfigState["nsfw"]
-  incognito: ConfigState["incognito"]
-  hideGui: ConfigState["hideGui"]
-  pinned: ConfigState["pinned"]
+  [K in (typeof CONFIG_STATE_TOGGLEABLE_FIELDS)[number]]: ConfigState[K]
 }
 
 export const { store: ConfigStore } = await persist<ConfigState>(
