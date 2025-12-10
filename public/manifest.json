@@ -10,6 +10,7 @@
     "128": "icons/icon-128.png"
   },
   "host_permissions": [
+    "https://www.reddit.com/r/Animewallpaper/search.json*",
     "https://i.redd.it/"
   ]
 }
