@@ -28,10 +28,9 @@ export async function fetchPosts(config: ConfigState) {
     )
     const json = (await res.json()) as RedditSearchResponse
 
+    posts = posts.concat(json.data.children.map((child) => child.data))
     after = json.data.after
     if (!after) break
-
-    posts = posts.concat(json.data.children.map((child) => child.data))
   }
 
   // Filter by NSFW if enabled

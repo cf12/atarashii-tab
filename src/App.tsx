@@ -46,8 +46,6 @@ function App() {
     )
   }, [config.theme.primary, config.theme.backgroundDim])
 
-  console.log(config.theme)
-
   useEffect(() => {
     if (config.pinned && loaded === LoadState.FETCH_NEW) {
       setLoaded(LoadState.LOADING)
@@ -81,7 +79,10 @@ function App() {
         posts = cache.data as RedditPost[]
       }
 
-      if (!posts.length || ignore) return
+      if (!posts.length || ignore) {
+        if (!ignore) setLoaded(LoadState.LOADED)
+        return
+      }
 
       const num = Math.floor(Math.random() * posts.length)
       const post = posts[num]
@@ -100,8 +101,10 @@ function App() {
   }, [cache.data, cache.lastUpdated, config, loaded])
 
   const data =
-    history && loaded !== LoadState.FETCH_NEW
-      ? history[i] || history[history.length - 1]
+    loaded !== LoadState.FETCH_NEW
+      ? history.length
+        ? history[i] || history[history.length - 1]
+        : null
       : undefined
 
   return (

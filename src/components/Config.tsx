@@ -24,6 +24,7 @@ import { LoadState, setLoaded, setShowRollOverlay } from "../stores/AppStore"
 
 function playRollSound() {
   const AudioContextClass = window.AudioContext
+  if (!AudioContextClass) return
   const audio = new AudioContextClass()
   const notes = [880, 1174.66, 1567.98]
 

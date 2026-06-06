@@ -30,3 +30,5 @@ export const TimeDate = function () {
     </>
   )
 }
+
+export default TimeDate
