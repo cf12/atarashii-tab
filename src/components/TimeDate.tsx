@@ -6,7 +6,8 @@ export const TimeDate = function () {
   const [now, setNow] = useState(new Date())
 
   useEffect(() => {
-    setInterval(() => setNow(new Date()), 1000)
+    const interval = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(interval)
   }, [])
 
   return (
