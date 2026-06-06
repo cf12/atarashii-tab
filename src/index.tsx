@@ -1,6 +1,6 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import NProgress from "nprogress/nprogress"
+import NProgress from "nprogress"
 
 import "normalize.css"
 import "./css/nprogress.css"

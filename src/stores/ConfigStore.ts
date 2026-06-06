@@ -1,5 +1,13 @@
 import { persist } from "valtio-persist"
 
+export const PRIMARY_COLOR_PRESETS = [
+  "#ffc400",
+  "#ff6b6b",
+  "#7c5cff",
+  "#00d2ff",
+  "#2ee59d",
+] as const
+
 export const CONFIG_STATE_PICKABLE_FIELDS_MAP = {
   sort: ["relevance", "hot", "top", "new"],
   t: ["hour", "day", "week", "month", "year", "all"],
@@ -16,10 +24,16 @@ export type ConfigState = {
   hideGui: boolean
   pinned: boolean
 
-  isHistoryBarVisible: boolean
+  isMenuVisible: boolean
 
   theme: {
     primary: string
+    backgroundDim: number
+  }
+
+  settings: {
+    soundEffects: boolean
+    rerollFlash: boolean
   }
 }
 
@@ -47,7 +61,7 @@ export const { store: ConfigStore } = await persist<ConfigState>(
     hideGui: false,
     pinned: false,
 
-    isHistoryBarVisible: false,
+    isMenuVisible: false,
 
     //   toggleNsfw: () => set({ nsfw: !get().nsfw }),
     //   toggleIncognito: () => set({ incognito: !get().incognito }),
@@ -58,7 +72,13 @@ export const { store: ConfigStore } = await persist<ConfigState>(
     // toggle: (key) => set({ [key]: !get()[key] }),
 
     theme: {
-      primary: "#ffc400",
+      primary: PRIMARY_COLOR_PRESETS[0],
+      backgroundDim: 0.35,
+    },
+
+    settings: {
+      soundEffects: true,
+      rerollFlash: true,
     },
   },
   "config"
@@ -86,6 +106,6 @@ export const pickValue = <K extends keyof ConfigStatePickableFields>(
   ConfigStore[key] = value
 }
 
-export const toggleHistoryBar = () => {
-  ConfigStore.isHistoryBarVisible = !ConfigStore.isHistoryBarVisible
+export const toggleMenu = () => {
+  ConfigStore.isMenuVisible = !ConfigStore.isMenuVisible
 }

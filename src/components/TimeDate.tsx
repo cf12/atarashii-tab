@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 
 import './styles/TimeDate.scss'
 
-export default () => {
+export const TimeDate = function () {
   const [now, setNow] = useState(new Date())
 
   useEffect(() => {

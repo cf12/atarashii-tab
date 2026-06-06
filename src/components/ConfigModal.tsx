@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react"
+/* eslint-disable */
 
 import "./styles/ConfigModal.scss"
 
-export default ({ open, setOpen, config, setConfig }) => {
+interface ConfigModalProps {
+  open: boolean
+  config: any
+  setOpen: (open: boolean) => void
+  setConfig: (config: any) => void
+}
+
+export const ConfigModal = function ({ open, setOpen, config, setConfig }: ConfigModalProps) {
 
   // useEffect(() => {
   //   chrome.storage.sync.get(["config"], (res) => {
@@ -33,7 +40,7 @@ export default ({ open, setOpen, config, setConfig }) => {
       }}>
         <h1>Settings</h1>
 
-        <label onChange={e => setConfig({...config, t: e.target.value})}>
+        <label onChange={e => setConfig({ ...config, t: (e.target as HTMLSelectElement).value })}>
           <span>Time span</span>
           <select name="t">
             <option value="hour">Hour</option>
