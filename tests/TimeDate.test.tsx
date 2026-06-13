@@ -1,14 +1,14 @@
 import "@testing-library/jest-dom"
 import { render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { describe, expect, it } from "vitest"
-import TimeDate from "../src/components/TimeDate"
+import { describe, expect, it, vi } from "vitest"
+import { TimeDate } from "../src/components/TimeDate"
+
+const now = new Date("2024-09-10T15:49:00")
 
 function setup() {
-  return {
-    user: userEvent.setup(),
-    ...render(<TimeDate />),
-  }
+  vi.useFakeTimers()
+  vi.setSystemTime(now)
+  return render(<TimeDate />)
 }
 
 describe("TimeDate", () => {
@@ -16,7 +16,7 @@ describe("TimeDate", () => {
     setup()
 
     // format: 3:49 PM
-    const time = new Date().toLocaleTimeString("en-US", {
+    const time = now.toLocaleTimeString(undefined, {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
@@ -29,7 +29,7 @@ describe("TimeDate", () => {
     setup()
 
     // format: Wednesday, Sep 10
-    const date = new Date().toLocaleDateString("en-US", {
+    const date = now.toLocaleDateString(undefined, {
       weekday: "long",
       month: "short",
       day: "numeric",

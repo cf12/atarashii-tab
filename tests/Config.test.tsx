@@ -1,12 +1,11 @@
 import "@testing-library/jest-dom"
 import {
+  act,
   render,
   screen,
-  waitFor,
-  waitForElementToBeRemoved,
 } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { describe, expect, it, test } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import Config from "../src/components/Config"
 import { AppStore, LoadState } from "../src/stores/AppStore"
 import {
@@ -223,5 +222,76 @@ describe("Reroll button", async () => {
 
     // Then
     expect(AppStore.loaded).toBe(LoadState.FETCH_NEW)
+  })
+
+  it("plays the reroll sound and clears the flash overlay after the timeout", async () => {
+    vi.useFakeTimers()
+    const oscillator = {
+      type: "sine",
+      frequency: { setValueAtTime: vi.fn() },
+      connect: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+    }
+    const gain = {
+      gain: {
+        setValueAtTime: vi.fn(),
+        exponentialRampToValueAtTime: vi.fn(),
+      },
+      connect: vi.fn(),
+    }
+    const AudioContextMock = vi.fn(() => ({
+      currentTime: 10,
+      destination: {},
+      createGain: vi.fn(() => gain),
+      createOscillator: vi.fn(() => oscillator),
+    }))
+    vi.stubGlobal("AudioContext", AudioContextMock)
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0)
+      return 0
+    })
+
+    setup()
+
+    act(() => {
+      screen.getByRole("button", { name: /reroll/i }).click()
+    })
+
+    expect(AudioContextMock).toHaveBeenCalled()
+    expect(oscillator.start).toHaveBeenCalledTimes(3)
+    expect(AppStore.showRollOverlay).toBe(true)
+
+    act(() => {
+      vi.advanceTimersByTime(900)
+    })
+    expect(AppStore.showRollOverlay).toBe(false)
+
+    act(() => {
+      vi.advanceTimersByTime(500)
+    })
+    expect(screen.getByRole("button", { name: /reroll/i })).not.toHaveClass("active")
+  })
+
+  it("supports keyboard shortcuts and ignores modified or disabled shortcuts", async () => {
+    setup()
+    AppStore.loaded = LoadState.LOADED
+
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyR" }))
+    })
+    expect(AppStore.loaded).toBe(LoadState.FETCH_NEW)
+
+    AppStore.loaded = LoadState.LOADED
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyR", ctrlKey: true }))
+    })
+    expect(AppStore.loaded).toBe(LoadState.LOADED)
+
+    ConfigStore.incognito = true
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { code: "KeyI" }))
+    })
+    expect(ConfigStore.incognito).toBe(false)
   })
 })
