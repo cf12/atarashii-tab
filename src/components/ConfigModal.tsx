@@ -40,9 +40,9 @@ export const ConfigModal = function ({ open, setOpen, config, setConfig }: Confi
       }}>
         <h1>Settings</h1>
 
-        <label onChange={e => setConfig({ ...config, t: (e.target as HTMLSelectElement).value })}>
+        <label>
           <span>Time span</span>
-          <select name="t">
+          <select name="t" onChange={(e) => setConfig({ ...config, t: e.currentTarget.value })}>
             <option value="hour">Hour</option>
             <option value="day">Day</option>
             <option value="week">Week</option>
