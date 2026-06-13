@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   FaExclamationTriangle,
   FaEye,
@@ -20,8 +20,31 @@ import {
 } from "../stores/ConfigStore"
 import "./styles/Config.scss"
 
-import { LoadState, setLoaded } from "../stores/AppStore"
-import { HistoryStore } from "../stores/HistoryStore"
+import { LoadState, setLoaded, setShowRollOverlay } from "../stores/AppStore"
+
+function playRollSound() {
+  const AudioContextClass = window.AudioContext
+  if (!AudioContextClass) return
+  const audio = new AudioContextClass()
+  const notes = [880, 1174.66, 1567.98]
+
+  notes.forEach((frequency, index) => {
+    const start = audio.currentTime + index * 0.07
+    const gain = audio.createGain()
+    const oscillator = audio.createOscillator()
+
+    oscillator.type = "triangle"
+    oscillator.frequency.setValueAtTime(frequency, start)
+    gain.gain.setValueAtTime(0.0001, start)
+    gain.gain.exponentialRampToValueAtTime(0.055, start + 0.01)
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09)
+
+    oscillator.connect(gain)
+    gain.connect(audio.destination)
+    oscillator.start(start)
+    oscillator.stop(start + 0.1)
+  })
+}
 
 const ValuePicker = ({
   valueKey,
@@ -53,14 +76,41 @@ const ValuePicker = ({
             </a>
           )
         )
-        .reduce((prev, cur) => [prev, "•", cur])}
+        .reduce((prev, cur) => <>{prev} • {cur}</>)}
     </div>
   )
 }
 
 function Config() {
   const config = useSnapshot(ConfigStore)
-  const { history } = useSnapshot(HistoryStore)
+  const [isRolling, setIsRolling] = useState(false)
+  const rollOverlayTimeout = useRef<number | null>(null)
+
+  const reroll = useCallback(() => {
+    if (config.settings.soundEffects) playRollSound()
+    setIsRolling(false)
+    setShowRollOverlay(false)
+    if (rollOverlayTimeout.current) window.clearTimeout(rollOverlayTimeout.current)
+
+    requestAnimationFrame(() => setIsRolling(true))
+    if (config.settings.rerollFlash) {
+      requestAnimationFrame(() => setShowRollOverlay(true))
+
+      rollOverlayTimeout.current = window.setTimeout(
+        () => setShowRollOverlay(false),
+        900
+      )
+    }
+
+    setLoaded(LoadState.FETCH_NEW)
+  }, [config.settings.rerollFlash, config.settings.soundEffects])
+
+  useEffect(() => {
+    if (!isRolling) return
+
+    const timeout = window.setTimeout(() => setIsRolling(false), 500)
+    return () => window.clearTimeout(timeout)
+  }, [isRolling])
 
   const buttons = useMemo(
     () => [
@@ -80,11 +130,7 @@ function Config() {
       {
         id: "pin",
         icon: FaThumbtack,
-        action: () => {
-          HistoryStore.i = history.length - 1
-          toggle("pinned")
-          if (config.pinned) setLoaded(LoadState.FETCH_NEW)
-        },
+        action: () => toggle("pinned"),
         isActive: config.pinned,
         isDisabled: config.incognito,
         keyBinding: "KeyP",
@@ -92,7 +138,8 @@ function Config() {
       {
         id: "reroll",
         icon: FaSync,
-        action: () => setLoaded(LoadState.FETCH_NEW),
+        action: reroll,
+        isActive: isRolling,
         isDisabled: config.incognito || config.pinned,
         keyBinding: "KeyR",
       },
@@ -116,7 +163,8 @@ function Config() {
       config.incognito,
       config.nsfw,
       config.pinned,
-      history.length,
+      isRolling,
+      reroll,
     ]
   )
 

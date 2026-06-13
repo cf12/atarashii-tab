@@ -1,31 +1,42 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import NProgress from "nprogress"
 
 type ImageProps = React.ImgHTMLAttributes<HTMLImageElement>
 
-function Image({ src, ...props }: ImageProps) {
-  const [loadedSrc, setLoadedSrc] = useState<string | undefined>(undefined)
+function Image({ src, onLoad, onError, ...props }: ImageProps) {
+  const [loadedSrc, setLoadedSrc] = useState(src)
+  const currentSrc = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     if (!src) return
+    if (src === currentSrc.current) return
 
-    const xmlHTTP = new XMLHttpRequest()
-    xmlHTTP.open("GET", src, true)
-    xmlHTTP.responseType = "arraybuffer"
-    xmlHTTP.onload = function () {
+    currentSrc.current = src
+    NProgress.start()
+    setLoadedSrc(src)
+
+    return () => {
       NProgress.done()
-      setLoadedSrc(window.URL.createObjectURL(new Blob([this.response])))
     }
-    xmlHTTP.onprogress = (e) => {
-      NProgress.set(e.loaded / e.total)
-    }
-    xmlHTTP.onloadstart = () => {
-      NProgress.start()
-    }
-    xmlHTTP.send()
   }, [src])
 
-  return <img src={loadedSrc} {...props} />
+  return (
+    <img
+      src={loadedSrc}
+      onLoad={(event) => {
+        NProgress.done()
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => onLoad?.(event))
+        })
+      }}
+      onError={(event) => {
+        NProgress.done()
+        onError?.(event)
+      }}
+      {...props}
+    />
+  )
 }
 
 export default Image

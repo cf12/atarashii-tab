@@ -1,14 +1,14 @@
 import { useSnapshot } from "valtio"
-import { ConfigStore, toggleHistoryBar } from "../stores/ConfigStore"
+import { ConfigStore, toggleMenu } from "../stores/ConfigStore"
 import { useEffect, useState } from "react"
 import { FaArrowDown, FaArrowUp } from "react-icons/fa"
 
-import "./styles/HistoryBarButton.scss"
+import "./styles/MenuButton.scss"
 
 const TIMEOUT_MS = 3000
 
-function HistoryBarButton() {
-  const { isHistoryBarVisible: isVisible } = useSnapshot(ConfigStore)
+function MenuButton() {
+  const { isMenuVisible: isVisible } = useSnapshot(ConfigStore)
   const [isHovered, setIsHovered] = useState(true)
 
   useEffect(() => {
@@ -20,12 +20,12 @@ function HistoryBarButton() {
 
   return (
     <div
-      className={`history-bar-button ${
+      className={`menu-button ${
         isVisible || isHovered ? "visible" : ""
       }`}
     >
       <button
-        onClick={toggleHistoryBar}
+        onClick={toggleMenu}
         onMouseEnter={() => {
           setIsHovered(true)
         }}
@@ -39,11 +39,11 @@ function HistoryBarButton() {
       >
         {isVisible ? (
           <>
-            Hide History <FaArrowDown size={16} />
+            Hide Menu <FaArrowDown size={16} />
           </>
         ) : (
           <>
-            Show History <FaArrowUp size={16} />
+            Show Menu <FaArrowUp size={16} />
           </>
         )}
       </button>
@@ -51,4 +51,4 @@ function HistoryBarButton() {
   )
 }
 
-export default HistoryBarButton
+export default MenuButton

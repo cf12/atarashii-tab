@@ -4,4 +4,9 @@ export type ImageData = {
   url: string
   link: string
   nums: readonly [i: number, total: number]
+
+  backgroundUrl?: string
+  thumbnailUrl?: string
+
+  favorite?: boolean
 }

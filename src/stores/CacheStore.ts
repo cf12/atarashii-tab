@@ -1,8 +1,9 @@
 import { persist } from "valtio-persist"
+import type { RedditPost } from "./HistoryStore"
 
 export type CacheStore = {
   lastUpdated: number
-  data: any[]
+  data: RedditPost[]
 }
 
 export const { store: CacheStore } = await persist<CacheStore>(

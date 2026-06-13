@@ -1,9 +1,24 @@
 import { persist } from "valtio-persist"
 
+export const PRIMARY_COLOR_PRESETS = [
+  "#ffc400",
+  "#ff6b6b",
+  "#7c5cff",
+  "#00d2ff",
+  "#2ee59d",
+] as const
+
 export const CONFIG_STATE_PICKABLE_FIELDS_MAP = {
   sort: ["relevance", "hot", "top", "new"],
   t: ["hour", "day", "week", "month", "year", "all"],
 }
+
+export const CONFIG_STATE_TOGGLEABLE_FIELDS = [
+  "nsfw",
+  "incognito",
+  "hideGui",
+  "pinned",
+] as const
 
 export type ConfigState = {
   num?: number
@@ -16,23 +31,25 @@ export type ConfigState = {
   hideGui: boolean
   pinned: boolean
 
-  isHistoryBarVisible: boolean
+  isMenuVisible: boolean
 
   theme: {
     primary: string
+    backgroundDim: number
+  }
+
+  settings: {
+    soundEffects: boolean
+    rerollFlash: boolean
   }
 }
 
 export type ConfigStatePickableFields = {
-  sort: ConfigState["sort"]
-  t: ConfigState["t"]
+  [K in keyof typeof CONFIG_STATE_PICKABLE_FIELDS_MAP]: ConfigState[K]
 }
 
 export type ConfigStateToggleableFields = {
-  nsfw: ConfigState["nsfw"]
-  incognito: ConfigState["incognito"]
-  hideGui: ConfigState["hideGui"]
-  pinned: ConfigState["pinned"]
+  [K in (typeof CONFIG_STATE_TOGGLEABLE_FIELDS)[number]]: ConfigState[K]
 }
 
 export const { store: ConfigStore } = await persist<ConfigState>(
@@ -47,7 +64,7 @@ export const { store: ConfigStore } = await persist<ConfigState>(
     hideGui: false,
     pinned: false,
 
-    isHistoryBarVisible: false,
+    isMenuVisible: false,
 
     //   toggleNsfw: () => set({ nsfw: !get().nsfw }),
     //   toggleIncognito: () => set({ incognito: !get().incognito }),
@@ -58,7 +75,13 @@ export const { store: ConfigStore } = await persist<ConfigState>(
     // toggle: (key) => set({ [key]: !get()[key] }),
 
     theme: {
-      primary: "#ffc400",
+      primary: PRIMARY_COLOR_PRESETS[0],
+      backgroundDim: 0.35,
+    },
+
+    settings: {
+      soundEffects: true,
+      rerollFlash: true,
     },
   },
   "config"
@@ -86,6 +109,6 @@ export const pickValue = <K extends keyof ConfigStatePickableFields>(
   ConfigStore[key] = value
 }
 
-export const toggleHistoryBar = () => {
-  ConfigStore.isHistoryBarVisible = !ConfigStore.isHistoryBarVisible
+export const toggleMenu = () => {
+  ConfigStore.isMenuVisible = !ConfigStore.isMenuVisible
 }
